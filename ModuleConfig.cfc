@@ -1,8 +1,8 @@
 component {
 
     this.title = 'Gitbok PDF';
-    this.modelNamespace = 'commandbox-gitbookpdf';
-    this.cfmapping = 'commandbox-gitbookpdf';
+    this.modelNamespace = 'commandbox-gitbook';
+    this.cfmapping = 'commandbox-gitbook';
 
     function configure() {
         settings = {

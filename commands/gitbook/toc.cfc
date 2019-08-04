@@ -1,53 +1,34 @@
 /**
- * run the component to read out the table of contents 
+ * List the table of contents for a specif version of a Gitbook export 
  */
 component {
     
     property name="configService" inject="configService";
-
-    function run() {
+    property name="BookService" inject="BookService@commandbox-gitbook";
+    
+	/**
+	 * @bookDirectory Directory where the JSON export is for a Gitbook
+	 * @version Version of the book to act on.
+	 * @version.optionsUDF versionsComplete 
+	 */
+    function run(
+    	string bookDirectory=resolvePath( '' ),
+    	string version=configService.getSetting('version','current')
+    ) {
         
-        /**
-         * Unzip file into a temp folder to work on it
-         * TODO: will be a path specified by the user
-         * TODO: move this into its own function
-         */
-        var sourcePath = expandPath('./gitbook-sample.zip');
-        var tempDirectory = expandPath('./temp/')
-        cfzip(action="unzip", file=sourcePath, destination=tempDirectory, overwrite="true");
-        
-        /**
-         * Read version information from the revision.json file
-         */
-        var revisionFilePath = expandPath(tempDirectory & 'revision.json');
-        if (fileExists(revisionFilePath)) {
-            var revisionsJSONString = fileRead(revisionFilePath);
-            var revisionsJSONObj = deserializeJSON(revisionsJSONString);
-
-            if (structKeyExists(revisionsJSONObj, 'versions')) {
-                var version = configService.getSetting('version','current')
-                if(version == 'current') version = revisionsJSONObj.primaryVersionID;
-                if(structKeyExists(revisionsJSONObj.versions,version)){
-                    var tocTree = filterPageTitles(revisionsJSONObj.versions[version].page);
-                    print.line(tocTree);
-                }
-
-            } else {
-                print.boldText('No Versions');
-            }
-        } else {
-            print.boldText('a revision.json file is not present in your Gitbook export file.');
+        if( !bookService.isBook( bookDirectory ) ) {
+        	error('A revision.json file is not present in this folder.  Please check your path.');
         }
+		
+		print.line( bookService.getTOC( bookDirectory, version ) );
+
     }
 
     
-    function filterPageTitles(required struct page){
-        var subpages = page.pages.map(filterPageTitles);
-        var pageData = {};
-        pageData[page.title] = subpages;
-        if( !arrayLen(subpages) ) return page.title;
-        return pageData;
-    }
-    
+	function versionsComplete() {
+		try {
+			return bookServuce.getVersions( resolvePath( '' ) );
+		} catch( any e ) {}        		
+	}    
 
 }
