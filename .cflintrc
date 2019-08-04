@@ -1,0 +1,20 @@
+{
+    "rule": [],
+    "excludes": [
+        {
+            "code": "COMPONENT_INVALID_NAME"
+        },
+        {
+            "code": "FUNCTION_HINT_MISSING"
+        },
+        {
+            "code": "FUNCTION_TYPE_MISSING"
+        },
+        {
+            "code": "COMPONENT_HINT_MISSING"
+        }
+    ],
+    "includes": [],
+    "inheritParent": false,
+    "parameters": {}
+}
