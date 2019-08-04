@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gitbook Page Parser</title>
+</head>
+
+<body>
+
+</body>
+<style type="text/css">
+    body {
+        font-family: Content-font, Roboto, sans-serif;
+        font-size: .85em;
+    }
+
+    blockquote {
+        margin: 0px 0px 24px;
+        padding: 0px 0px 0px 12px;
+        border-left: 4px solid rgb(230, 236, 241);
+        border-color: rgb(230, 236, 241);
+    }
+
+    ul,
+    ol {
+        color: #3B454E;
+        margin: 0;
+        padding: 0;
+        padding-left: 2em;
+        margin-bottom: 24px;
+    }
+
+    li {}
+
+    p {
+        color: inherit;
+        margin: 0;
+        position: relative;
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    table {
+        width: 100%;
+        position: relative;
+        border-collapse: collapse;
+        background: rgb(157, 170, 182);
+        page-break-inside: auto;
+    }
+
+    tr {
+        border-top-width: initial;
+        border-right-width: initial;
+        border-left-width: initial;
+        border-top-color: initial;
+        border-right-color: initial;
+        border-left-color: initial;
+        border-style: none none solid;
+        border-image: initial;
+        padding: 10px;
+        background: rgb(255, 255, 255);
+        border-bottom: 1px solid rgb(230, 236, 241);
+        page-break-after: auto;
+        page-break-inside: avoid;
+    }
+
+    table tr:first-child {
+        color: rgb(157, 170, 182);
+        font-size: 16px;
+        font-weight: 500;
+        border-bottom: 2px solid rgb(230, 236, 241);
+    }
+
+    table tr td {
+        width: auto;
+        position: relative;
+        align-self: start;
+        align-items: start;
+        -webkit-box-align: start;
+        padding: 8px;
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    table.paramTable {
+        table-layout: fixed;
+    }
+
+    table.paramTable tr:first-child td {
+        color: black;
+        font-size: 12px;
+        font-weight: 500;
+        border-bottom: none;
+    }
+
+    table tr td p {
+        font-size: 13px;
+        font-family: Content-font, Roboto, sans-serif;
+        font-weight: 400;
+    }
+
+    .code-line {
+        tab-size: 4;
+        font-size: 85%;
+        overflow-x: auto;
+        font-family: "Source Code Pro", Menlo, monospace;
+        line-height: 1.7;
+        counter-reset: line 0;
+        background-color: rgb(245, 247, 249);
+        border: 1px solid #dedede;
+        margin: 4px 0;
+        padding: 9px 4px;
+        border-radius: 3px;
+    }
+
+    .math {
+        tab-size: 4;
+        font-size: 85%;
+        overflow-x: auto;
+        font-family: "Source Code Pro", Menlo, monospace;
+        line-height: 1.7;
+        counter-reset: line 0;
+        background-color: rgb(245, 247, 249);
+        border: 1px solid #dedede;
+        margin: 4px 0;
+        padding: 9px 4px;
+        border-radius: 3px;
+    }
+
+    .hint {
+        width: 100%;
+        display: block;
+        position: relative;
+        background-color: rgb(245, 247, 249);
+        margin: 32px 0px;
+        padding: 14px 24px;
+        border-left: 4px solid rgb(38, 203, 124);
+        border-radius: 3px;
+    }
+
+    .api-method-summary {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .api-method-description {
+        font-size: 16px;
+        font-family: Content-font, Roboto, sans-serif;
+        font-weight: 400;
+        line-height: 1.625;
+    }
+
+    .api-method-spec {
+        border: 1px solid #e4e4e4;
+        padding: 14px;
+
+    }
+
+    .api-method-path-parameters,
+    .api-method-query-parameters {
+        border: 1px solid #e4e4e4;
+        padding: 14px;
+
+    }
+
+    .api-method-title {
+        font-size: 16px;
+        color: #848484;
+        font-weight: lighter;
+        padding: 7px 0 3px;
+    }
+
+    .valDesc {
+        color: #999;
+        font-style: italic;
+    }
+
+    .status-code-200 .status-bullet {
+        background: #00d400;
+    }
+
+    .status-code-302 .status-bullet {
+        background: rgb(255, 157, 61);
+    }
+
+    .status-bullet {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        background: #00d400;
+        border-radius: 50%;
+        margin: 0 5px;
+    }
+</style>
+<script>
+    
+    /*
+    {
+        "kind": "block",
+        "type": "heading-1",
+        "key": "b0b3282493664b23b497eeb31b7b9481",
+        "isVoid": false,
+        "data": {},
+        "nodes": [
+            {
+                "kind": "text",
+                "key": "5be3075042f346518c3618a3cea6eef9",
+                "ranges": [
+                    {
+                        "kind": "range",
+                        "marks": [],
+                        "text": "H1 Tag"
+                    }
+                ]
+            }
+        ]
+    },
+    */
+
+    var blockTypes = {
+        //HTML Standard Types Simple
+        "heading-1": function (node, htmlFragment) {
+            return '<h1>' + htmlFragment + '</h1>'
+        },
+        "heading-2": function (node, htmlFragment) {
+            return '<h2>' + htmlFragment + '</h2>'
+        },
+        "heading-3": function (node, htmlFragment) {
+            return '<h3>' + htmlFragment + '</h3>'
+        },
+        "paragraph": function (node, htmlFragment) {
+            return '<p>' + htmlFragment + '</p>'
+        },
+        "list-unordered": function (node, htmlFragment) {
+            return '<ul>' + htmlFragment + '</ul>'
+        },
+        "list-ordered": function (node, htmlFragment) {
+            return '<ol>' + htmlFragment + '</ol>'
+        },
+        "code": function (node, htmlFragment) {
+            return '<code>' + htmlFragment + '</code>'
+        },
+        "blockquote": function (node, htmlFragment) {
+            return '<blockquote>' + htmlFragment + '</blockquote>'
+        },
+        "table": function (node, htmlFragment) {
+            return '<table>' + htmlFragment + '</table>'
+        },
+        "table-row": function (node, htmlFragment) {
+            return '<tr>' + htmlFragment + '</tr>'
+        },
+        "table-cell": function (node, htmlFragment) {
+            return '<td>' + htmlFragment + '</td>'
+        },
+
+        //HTML Standard Types With Metadata
+        "list-item": function (node, htmlFragment) {
+            var isChecked = node.data.hasOwnProperty('checked') && node.data.checked;
+            return '<li>' + (isChecked ? '&#10003; ' : '') + htmlFragment + '</li>'
+        },
+        "image": function (node, htmlFragment) {
+            var caption = node.data.caption;
+            return '<img src="' + htmlFragment + '"><div class="caption">' + caption + '</div>';
+        },
+
+        // Gitbook Custom Types Simple
+        "document": function (node, htmlFragment) {
+            return '<div class="document">' + htmlFragment + '</div>'
+        },
+        "code-line": function (node, htmlFragment) {
+            return '<div class="code-line">' + htmlFragment + '</div>'
+        },
+        "code-tab": function (node, htmlFragment) {
+            return '<div class="code-tab">' + htmlFragment + '</div>'
+        },
+        "tabs": function (node, htmlFragment) {
+            return '<div class="tabs">' + htmlFragment + '</div>'
+        },
+
+        // Gitbook Custom Types With Metadata
+        "hint": function (node, htmlFragment) {
+            var cls = node.data.style;
+            return '<div class="hint ' + cls + '">' + htmlFragment + '</div>'
+        },
+        "file": function (node, htmlFragment) {
+            var assetID = node.data.assetID;
+            //TODO: lookup asset and maybe insert it if its an image, or maybe just display the filename.
+            return '<div class="file">' + htmlFragment + '</div>'
+        },
+        "page-ref": function (node, htmlFragment) {
+            var pageID = node.data.page;
+            return '<div class="page-ref">' + htmlFragment + '</div>'
+        },
+        "tabs-item": function (node, htmlFragment) {
+            var tabName = '<h3 class="tab-title">' + node.data.title + '</h3>'
+            return tabName + '<div class="tabs-item">' + htmlFragment + '</div>'
+        },
+        "math": function (node, htmlFragment) {
+            return '<div class="math">' + node.data.formula + '</div>'
+        },
+
+
+        //Api Specific Types Simple
+        "api-method": function (node, htmlFragment) {
+            return '<div class="api-method">' + htmlFragment + '</div>'
+        },
+        "api-method-spec": function (node, htmlFragment) {
+            return '<div class="api-method-spec">' + htmlFragment + '</div>'
+        },
+        "api-method-description": function (node, htmlFragment) {
+            return '<div class="api-method-description">' + htmlFragment + '</div>'
+        },
+        "api-method-summary": function (node, htmlFragment) {
+            return '<div class="api-method-summary">' + htmlFragment + '</div>'
+        },
+        "api-method-response-example-description": function (node, htmlFragment) {
+            return '<div class="api-method-response-example-description">' + htmlFragment + '</div>'
+        },
+        "api-method-path-parameters": function (node, htmlFragment) {
+            return '<div class="api-method-title">Path Paramaters</div><div class="api-method-path-parameters">' +
+                htmlFragment + '</div>'
+        },
+        "api-method-query-parameters": function (node, htmlFragment) {
+            return '<div class="api-method-title">Query Paramaters</div><div class="api-method-query-parameters">' +
+                htmlFragment + '</div>'
+        },
+        "api-method-request": function (node, htmlFragment) {
+            return '<h3>Request</h3><div class="api-method-request">' + htmlFragment + '</div>'
+        },
+
+        //Api Specific Types With Metadata
+        "api-method-parameter": function (node, htmlFragment) {
+            var methodName = '<td width="100"><div class="valDesc">Name</div>' + node.data.name + '&nbsp;</td>';
+            var methodType = '<td width="100"><div class="valDesc">Type</div>' + node.data.type + '</td>';
+            var methodRequired = '<td width="100"><div class="valDesc">Required</div>' + node.data.required +
+                '</td>';
+            var methodDesc = '<td><div class="valDesc">Desc</div>' + htmlFragment + '</td>';
+
+            return '<div class="api-method-parameter"><table class="paramTable"><tr>' + methodName +
+                methodType + methodRequired + methodDesc + '</tr></table></div>'
+        },
+
+        "api-method-response-example": function (node, htmlFragment) {
+            var httpCode = '<div class="status-code-' + node.data.httpCode +
+                '"><span class="status-bullet"></span>' + node.data.httpCode + '</div>';
+            return '<div class="api-method-response-example">' + httpCode + '<div>' + htmlFragment +
+                '</div></div>'
+        },
+        "api-method-response": function (node, htmlFragment) {
+            return '<h3>Response</h3><div class="api-method-response">' + htmlFragment + '</div>'
+        }
+    };
+
+    function createBook(bookData) {
+        document.body.innerHTML += parseJSONDocument(bookData);
+    }
+
+    function parseJSONDocument(JSONDocument) {
+        return createElement(JSONDocument.document);
+    }
+
+    function createElement(JSONElement) {
+        var htmlFragment = "";
+        var parentFragment = "";
+        var innerElements = JSONElement.hasOwnProperty("nodes") ? JSONElement.nodes.map(createElement) : [];
+
+        if (JSONElement.kind == "text") return createTextNode(JSONElement);
+        if (blockTypes.hasOwnProperty(JSONElement.type)) {
+            if (Object.keys(JSONElement['data']).length) {
+                console.log(JSONElement.type, JSON.stringify(JSONElement.data));
+            }
+            return blockTypes[JSONElement.type](JSONElement, innerElements.join(" "));
+        }
+        return '<div class="missing-element-type">' + innerElements.join(" ") + '</div>';
+    }
+
+    function createTextNode(JSONTextNode) {
+        return JSONTextNode.ranges.map(markupText).join(" ");
+    }
+
+    function markupText(JSONRangeNode) {
+        return JSONRangeNode.text;
+    }
+    var data = {
+        "format_version": 1,
+        "document": {
+            "kind": "document",
+            "key": "4",
+            "data": {
+                "schema_version": 5
+            },
+            "nodes": [{
+                "kind": "block",
+                "type": "heading-1",
+                "key": "b0b3282493664b23b497eeb31b7b9481",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "text",
+                    "key": "5be3075042f346518c3618a3cea6eef9",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": "H1 Tag"
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "heading-2",
+                "key": "e6508fc768074f438a717fbb6d0764b6",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "text",
+                    "key": "11f80a3776454c15b900487b5470d5f6",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": "H2 Tag"
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "heading-3",
+                "key": "94d4e80c738b426ea4aaf9f981d55533",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "text",
+                    "key": "7f6c2af02f5247ba9323f3d01a16b6c3",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": "H3 Tag"
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "list-unordered",
+                "key": "40fc0e6fd7444498bd1aae810001d366",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "514fcc9f44044ceeb50c3c7d64e2d3d2",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "c2dde44db65f4b808314507819aba89b",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "32779a2de05040799d298ecf0bb1b5f3",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Bullet 1"
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "list-unordered",
+                        "key": "9ca80704c2754ea3a0397c8c3a1e44d0",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "list-item",
+                            "key": "d6d13cee5678484f830954afb91e545f",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "paragraph",
+                                "key": "33f769a22ed64523943e146d656a97f2",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "a183673ce1914256874309b0d466ef3d",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "Bullet 2"
+                                    }]
+                                }]
+                            },
+                            {
+                                "kind": "block",
+                                "type": "list-unordered",
+                                "key": "9328d7976d824ae1af3a8d045d0b63ed",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "block",
+                                    "type": "list-item",
+                                    "key": "ce956c0157d14891bf1ed9eecff0379f",
+                                    "isVoid": false,
+                                    "data": {},
+                                    "nodes": [{
+                                        "kind": "block",
+                                        "type": "paragraph",
+                                        "key": "cd6d6e238ed5438eb60cdb5783806597",
+                                        "isVoid": false,
+                                        "data": {},
+                                        "nodes": [{
+                                            "kind": "text",
+                                            "key": "3f7b68ba8b504ee9b51be6ae7f8c011f",
+                                            "ranges": [{
+                                                "kind": "range",
+                                                "marks": [],
+                                                "text": "Bullet 3"
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }
+                            ]
+                        }]
+                    }
+                    ]
+                },
+                {
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "8d9f7db934f04abb9b16d497521ee115",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "9f5155f708134223a3feae966350bdf6",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "3efa0a852f854fbd945cb34a6298039b",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Bullet 4"
+                            }]
+                        }]
+                    }]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "list-ordered",
+                "key": "614eef7ae274408ea8c3a7418c89f77d",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "9f503993fd6f41b2a78b9687e6358393",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "2a98d153113843458b1a6778c8052346",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "36b0bae3cb7e405fb6f3df2e62e5f72e",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Ordered 1"
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "f1fa6fd633ef43d0a8273d2c50540e8f",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "0e4ea8475106463eb9e21f0aa5755b0b",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "8814f83def044e73af9742c2459b00ba",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Ordered 2"
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "list-ordered",
+                        "key": "7150b730dea04f39828c16c4c2c27ab9",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "list-item",
+                            "key": "ad2e606bf5384b2ea3119c123910e8f4",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "paragraph",
+                                "key": "e897b965f86247c2b06ad66fc5b32b15",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "12a108f0a3ae4684aaf80bd790daa967",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "O2 S1"
+                                    }]
+                                }]
+                            }]
+                        },
+                        {
+                            "kind": "block",
+                            "type": "list-item",
+                            "key": "a4f16ea0603e4a1b91fa8e566e4faa19",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "paragraph",
+                                "key": "c89db69e072b451499fcc172cefa8b02",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "1f02f86b5e564dee96fc9b33dfbefc68",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "O2 S2"
+                                    }]
+                                }]
+                            },
+                            {
+                                "kind": "block",
+                                "type": "list-ordered",
+                                "key": "3562cfd944204d86a4fdf1a479705a36",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "block",
+                                    "type": "list-item",
+                                    "key": "2e257e0c69504bd0a7b29acf81e29226",
+                                    "isVoid": false,
+                                    "data": {},
+                                    "nodes": [{
+                                        "kind": "block",
+                                        "type": "paragraph",
+                                        "key": "14866af1192c4cea98beaf082d25f6a1",
+                                        "isVoid": false,
+                                        "data": {},
+                                        "nodes": [{
+                                            "kind": "text",
+                                            "key": "fbe57fe7bd78427ea794aabe43044490",
+                                            "ranges": [{
+                                                "kind": "range",
+                                                "marks": [],
+                                                "text": "O2 S2 T1"
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }
+                            ]
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "list-unordered",
+                "key": "a6f4a87faaec4cb9ba290219398b14ce",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "9cfdbf2e08244d5da69646082486f52e",
+                    "isVoid": false,
+                    "data": {
+                        "checked": false
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "6fe407c4f1bf4fd59f95716cf68005ad",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "c8a431d802c54de18ed975d06bcc8d67",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Task 1"
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "5ee35bf6c8ba48cbbdba03c3c0542aeb",
+                    "isVoid": false,
+                    "data": {
+                        "checked": true
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "3928780d66fe4aeca4ce70c6613d1c09",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "f1a7a4edbff14a6e930d9ca895d9e36f",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Task 2"
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "list-item",
+                    "key": "41ff60ac739d48e684fb8cd8015b9b3d",
+                    "isVoid": false,
+                    "data": {
+                        "checked": false
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "1c7b6285620043aeb7c83316bc2f1249",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "a5af67b5dba64b5d96159006cc64b0cb",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Task 3"
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "list-unordered",
+                        "key": "d8fe9a1ed1d243279674d4763978a364",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "list-item",
+                            "key": "94ffd8d8f2da49fea024214816dc04c2",
+                            "isVoid": false,
+                            "data": {
+                                "checked": false
+                            },
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "paragraph",
+                                "key": "33b09f1934f24503a259d735030ec612",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "4d9f9d3bdff548f5bbe1776d9bf3db4d",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "T3 Subtask 1"
+                                    }]
+                                }]
+                            }]
+                        },
+                        {
+                            "kind": "block",
+                            "type": "list-item",
+                            "key": "e348e18cf32042bda34031343428984c",
+                            "isVoid": false,
+                            "data": {
+                                "checked": true
+                            },
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "paragraph",
+                                "key": "22647ff544cf4c3198a12c5f7d851b60",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "8bf82450512a4d8cb26e842be472c7ae",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "T3 Subtask 2"
+                                    }]
+                                }]
+                            }]
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "code",
+                "key": "aafbc93149da476199a7ec1da773eb14",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "code-tab",
+                    "key": "83b9f0e139664623b3bde61b19952f63",
+                    "isVoid": false,
+                    "data": {
+                        "syntax": "text",
+                        "title": "My File Bro"
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "code-line",
+                        "key": "ecb9ecb0debc44a2821185e9b8282e76",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "1ed0a1bbf7c142cc8f5f61384f89eab8",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "$ here is some code, execute it"
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "code-tab",
+                    "key": "50271a35b752494fb08b590e266339da",
+                    "isVoid": false,
+                    "data": {
+                        "title": "File 2",
+                        "syntax": "bash"
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "code-line",
+                        "key": "bf4e8cb0daab496280e6fe71e359efdb",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "d171bbcf24d24ba5814f4694ebceaba2",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "## Sup with the wack whatsup"
+                            }]
+                        }]
+                    }]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "blockquote",
+                "key": "48bb9dd1a92f49b1ba34b3bc5bc1582d",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "heading-2",
+                    "key": "15b4885cd2174e76bf2b32e8ea95b50b",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "text",
+                        "key": "8a6510aad5e24690812745ccf82d94c3",
+                        "ranges": [{
+                            "kind": "range",
+                            "marks": [],
+                            "text": "4 score and 7 years ago, stuff happened, the end"
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "heading-3",
+                    "key": "ca1baaee08bc43fda81c8d8050465320",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "text",
+                        "key": "ce623e984f68463b8a6e046acfeaf675",
+                        "ranges": [{
+                            "kind": "range",
+                            "marks": [],
+                            "text": "Oh tell me about it"
+                        }]
+                    }]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "image",
+                "key": "b6d282333a584ffc9eb59f92696aa07c",
+                "isVoid": true,
+                "data": {
+                    "assetID": "-LlFoCJJ9QnrdHch3YzG",
+                    "caption": "Corn Image"
+                },
+                "nodes": [{
+                    "kind": "text",
+                    "key": "1d2f962ce7a64a83803c42230a27d118",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": ""
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "table",
+                "key": "82df3e82508146d083102d01692ee424",
+                "isVoid": false,
+                "data": {
+                    "aligns": [
+                        "left",
+                        "left",
+                        "left",
+                        "left",
+                        "left",
+                        "left"
+                    ]
+                },
+                "nodes": [{
+                    "kind": "block",
+                    "type": "table-row",
+                    "key": "a05fd17127794fff9370c6bc4f17ecfa",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "8576c22395494e7193c86c6b31fc50f7",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "bae9c271b242419183c3c5ec8e06e01d",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "f1a79ecf1d3748b89d9a51ab0edf075b",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "cef2139ae03c4e48bf36d3cbf8d66b06",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "eba9c70e21bd47dcaf4c4d6995c6de55",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "7da6dd123b6e4ab7a5db70aec55f9b0b",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "ad07d7d508ab45609639db1a37b78c04",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "639419dd87974c62815f39788c5f50b2",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "c9881861609741529b2990745ac77c0f",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "aae1c9b615664787983aa91333f06225",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "7d52de4ff54a49c893dcd344e66b1e41",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "5d0433253cf14ccfad0f4d0029d4fab8",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "9e72c5139a0040ff8abf098b7d1338ad",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "13564e173e93473baa1bef1772a960a6",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "0a1af6b0a20c40ecb5dd0e4b3646913b",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "45a68670f85e41a2a835c38979fb9287",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "726c518e95a14f22a5b0df4f6c751b71",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "d4098b9c8b484d6b90a9b102292cd4b7",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    }
+                    ]
+                },
+                {
+                    "kind": "block",
+                    "type": "table-row",
+                    "key": "0f141ee7cbb648168251486776237337",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "eb0aa7459280448fbcf9317ff57de3cc",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "da7ee9a8a3044db893e3c21b5d63ae96",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "aab034b6877342aab514a39bb5554808",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "da0c649390de4c9b8115e7eb0eac2952",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "1384de34c354477f9f52701afcc8edb8",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "d8f94a81a80340eea204b5a9d8c50234",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "70a7944a01774182be0d4e224529471c",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "b76ec88752204f4a969a76e59c19e978",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "0a7286de54ee455796efd989c4d6e7e2",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "5a4b7b28052f420b9b31ada909072a3b",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "cf26136e964c40aea95b1006e096fb69",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "cd48810aa1984a43a646d4ea7188e210",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "45c63e646fd549b1a5f0206d169e474e",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "4e1f5f66709648b9afea6f41adf3abe8",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "1e08578378444320b37a95b4c7dee3c9",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "eb6927e255564a0388d1d5d4403b1114",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "84ac204039a541eebf5c5461d7bdd67b",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "7eb497aa7c0543a786085a30d69f9bb5",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    }
+                    ]
+                },
+                {
+                    "kind": "block",
+                    "type": "table-row",
+                    "key": "b250f4f89bde4b1b8e132407e2bd924c",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "a2198f659c574173ac6630b851095bcb",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "d22e2551790b49f686e50340422c99f5",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "cd7513f82140480db538415eb8876466",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "00e94c6096d1481e9474904b542ce5a1",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "f9e305e104e94fb288da5592f47501bb",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "953ca13f682540e5956a0f981a38b73b",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "5a4ac848f1dc4f36aa3842dd99eb28b9",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "2cd75f9830a24e0db076e048d2b85b22",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "18e912e67c274eaf923ad42fc9528fe4",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "6c7c41ea2c1c496ab572eb1a6293c1b7",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "db7b7aa00da94d81b2d478b1afe0a623",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "cc72fd88d39c4503b3a4991506655a71",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "38eed1c49baf4aefa22435936ef1074c",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "b7a825b83afc4648b748271329425d51",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "ab5f6b508ca744248017945a5a98ee71",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "2c2195aece6c44749b9fd97b83c7893e",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "5179a5fe7b2841c69b74ee7b9bb97a86",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "2759cd018b9c441e81795a61fd9e534c",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    }
+                    ]
+                },
+                {
+                    "kind": "block",
+                    "type": "table-row",
+                    "key": "b9af16ab2cd84a8eacb40bc702f21043",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "52c1c2fc5c3e4460aaf61468bc2bae90",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "259dfb3df4e141f5a2bd4a334124bf01",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "f313255085594b75a0f0dadc625393e4",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "dc097537fcd641ad9d78e858c0364682",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "e671e352c4fc44948a01bd626ac23546",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "ec5838640229470cbfb8c1e192dc4f49",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "992fa60684c7494f9634932370e459d6",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "fb1bf647df024ecb825ddc66b6ae8379",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "ae68c906cb9f474c9c3b484b967ce856",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "eee8b55fad4a456b93e414da15b43a70",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "a2dfa5be89964e50945ef69d8e889ce5",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "f2c8e39231a5444fb741ba884592aeb0",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table ContentTable Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "3d3899c5437540c2af3a2095bff7ab95",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "6280b7a66ac44bc68bd624a70ea314e5",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "e1fe787523754b62bf8d94510153f8a9",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "table-cell",
+                        "key": "d0c9c81ba414401c8988be59a79ad5b5",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "key": "7797d43e3c6a4e69aa609007f90f4d5c",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "text",
+                                "key": "534323a5b604468aa20a3f239194b30c",
+                                "ranges": [{
+                                    "kind": "range",
+                                    "marks": [],
+                                    "text": "Table Content"
+                                }]
+                            }]
+                        }]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "hint",
+                "key": "6117f50766b2431fa4b730d063ac1d47",
+                "isVoid": false,
+                "data": {
+                    "style": "success"
+                },
+                "nodes": [{
+                    "kind": "block",
+                    "type": "paragraph",
+                    "key": "3d03a13c1b3c47c686c79b66fc74b0d2",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "text",
+                        "key": "1780c7330c2d4d6ca39a7e40f9a17c46",
+                        "ranges": [{
+                            "kind": "range",
+                            "marks": [],
+                            "text": "This is a hint for all  you cool kids out there"
+                        }]
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "page-ref",
+                "key": "ba1309e53a574edeb7baab2b7574b3e3",
+                "isVoid": true,
+                "data": {
+                    "page": "-LlJbgjpqDT7qQhLPjmf"
+                },
+                "nodes": [{
+                    "kind": "text",
+                    "key": "3a38778388044351b392d66bcd7ec25e",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": ""
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "api-method",
+                "key": "5164ab6ab3d14dddabccc1b424842d8e",
+                "isVoid": false,
+                "data": {
+                    "method": "post",
+                    "host": "",
+                    "path": ""
+                },
+                "nodes": [{
+                    "kind": "block",
+                    "type": "api-method-summary",
+                    "key": "0dcfac9824804d8e95a1879e56143ec6",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "text",
+                        "key": "fca726ea4b8f4e0296660db9208570eb",
+                        "ranges": [{
+                            "kind": "range",
+                            "marks": [],
+                            "text": "API Method"
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "api-method-description",
+                    "key": "d5e165a3d79f43e88b35312073e9608e",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "text",
+                        "key": "549ad48543ee49b98fcb59acd0d601bd",
+                        "ranges": [{
+                            "kind": "range",
+                            "marks": [],
+                            "text": "This is a method description"
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "api-method-spec",
+                    "key": "138e97791422454d873b4364cb0d085c",
+                    "isVoid": false,
+                    "data": {},
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "api-method-request",
+                        "key": "ff546b6a73e64f62a607238e4e81edff",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "api-method-path-parameters",
+                            "key": "67db7aad64be4da5abceac9b0c2bdf67",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "api-method-parameter",
+                                "key": "f3bec313386d48669fee25b810dcd766",
+                                "isVoid": false,
+                                "data": {
+                                    "name": "Yo Numba",
+                                    "type": "number",
+                                    "required": false
+                                },
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "d6f3d01a729b4e2ea0928dd8153177c8",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "Comeon man, its yo' numba"
+                                    }]
+                                }]
+                            }]
+                        },
+                        {
+                            "kind": "block",
+                            "type": "api-method-query-parameters",
+                            "key": "57d17965db8b4ee095e61f68dc83008e",
+                            "isVoid": false,
+                            "data": {},
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "api-method-parameter",
+                                "key": "cdf6be760b934c92a83c7a4c26c9c4ad",
+                                "isVoid": false,
+                                "data": {
+                                    "name": "",
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "b4e073c44aad42ef98564dd85e2ee365",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": "Qry param"
+                                    }]
+                                }]
+                            }]
+                        }
+                        ]
+                    },
+                    {
+                        "kind": "block",
+                        "type": "api-method-response",
+                        "key": "ab82506ca1784be490664cbbdcb893eb",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "api-method-response-example",
+                            "key": "6cb6bb27d4d54dff8411171f2decb02f",
+                            "isVoid": false,
+                            "data": {
+                                "httpCode": 200
+                            },
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "api-method-response-example-description",
+                                "key": "7aa9f747faae4eeca797c34d48c0544a",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "56149cdb6b0044a9b12a572ca03b0bb6",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": ""
+                                    }]
+                                }]
+                            },
+                            {
+                                "kind": "block",
+                                "type": "code",
+                                "key": "2b5d11fe695c47bab92d684f8f413ef3",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "block",
+                                    "type": "code-tab",
+                                    "key": "dd7ffa75b9724dc788647a34d97a1324",
+                                    "isVoid": false,
+                                    "data": {},
+                                    "nodes": [{
+                                        "kind": "block",
+                                        "type": "code-line",
+                                        "key": "ad3e566be18f4df2b86f7ed59ee1220f",
+                                        "isVoid": false,
+                                        "data": {},
+                                        "nodes": [{
+                                            "kind": "text",
+                                            "key": "236b5b736f0b4823bab54f6d87bc6e78",
+                                            "ranges": [{
+                                                "kind": "range",
+                                                "marks": [],
+                                                "text": "hahahaha, you get no response LOL"
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }
+                            ]
+                        },
+                        {
+                            "kind": "block",
+                            "type": "api-method-response-example",
+                            "key": "18782206cfa241a2bd3b7c390b9f4dfb",
+                            "isVoid": false,
+                            "data": {
+                                "httpCode": 302
+                            },
+                            "nodes": [{
+                                "kind": "block",
+                                "type": "api-method-response-example-description",
+                                "key": "b387d6ae36fb43fea54fdc4c534a633d",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "text",
+                                    "key": "cef7680ad3794ae29104340517090c1d",
+                                    "ranges": [{
+                                        "kind": "range",
+                                        "marks": [],
+                                        "text": ""
+                                    }]
+                                }]
+                            },
+                            {
+                                "kind": "block",
+                                "type": "code",
+                                "key": "ecbe984d70e74cd29377df5dea723ed2",
+                                "isVoid": false,
+                                "data": {},
+                                "nodes": [{
+                                    "kind": "block",
+                                    "type": "code-tab",
+                                    "key": "2f31e92ec68a4ca385f0a96f3137e6f3",
+                                    "isVoid": false,
+                                    "data": {
+                                        "syntax": "javascript"
+                                    },
+                                    "nodes": [{
+                                        "kind": "block",
+                                        "type": "code-line",
+                                        "key": "2ecd20754af14a849a702c35cebe2a00",
+                                        "isVoid": false,
+                                        "data": {},
+                                        "nodes": [{
+                                            "kind": "text",
+                                            "key": "c47df6dfd4cb4b81b3cc5c9757610bfd",
+                                            "ranges": [{
+                                                "kind": "range",
+                                                "marks": [],
+                                                "text": "{\"success\": found}"
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }
+                            ]
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "tabs",
+                "key": "d503da37e8db48068054eacf8237bdd4",
+                "isVoid": false,
+                "data": {},
+                "nodes": [{
+                    "kind": "block",
+                    "type": "tabs-item",
+                    "key": "7fa1866e0532472c85646fc534c15c18",
+                    "isVoid": false,
+                    "data": {
+                        "title": "Tab 1"
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "6d4716ac8a324fdfa9e6eaa3d027619d",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "0567e21ebf1f48c4a7f763576a17346d",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Tab number 1"
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "tabs-item",
+                    "key": "54d850621d5e4f9babab4fe91cdafbfb",
+                    "isVoid": false,
+                    "data": {
+                        "title": "Tab 2"
+                    },
+                    "nodes": [{
+                        "kind": "block",
+                        "type": "paragraph",
+                        "key": "a8c928c6257e4933949ec31b02199b54",
+                        "isVoid": false,
+                        "data": {},
+                        "nodes": [{
+                            "kind": "text",
+                            "key": "7786815ff94e45b5841a0485f934219e",
+                            "ranges": [{
+                                "kind": "range",
+                                "marks": [],
+                                "text": "Tab 2 content"
+                            }]
+                        }]
+                    }]
+                }
+                ]
+            },
+            {
+                "kind": "block",
+                "type": "math",
+                "key": "fee4563650724e199a40cee201c732f7",
+                "isVoid": true,
+                "data": {
+                    "formula": "a = b/3^x = π * 3.14"
+                },
+                "nodes": [{
+                    "kind": "text",
+                    "key": "8c2db7ad7b354dae8a5809670ccfec22",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": ""
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "file",
+                "key": "24ac9121ea0b423faa98feaa99f2def3",
+                "isVoid": true,
+                "data": {
+                    "assetID": "-LlIYXDFANmqn4QThGOe",
+                    "caption": "A big file"
+                },
+                "nodes": [{
+                    "kind": "text",
+                    "key": "19cca88499c04ff98ab4d3bc65ac2ff8",
+                    "ranges": [{
+                        "kind": "range",
+                        "marks": [],
+                        "text": ""
+                    }]
+                }]
+            }
+            ]
+        }
+    };
+    createBook(data);
+</script>
+
+</html>
