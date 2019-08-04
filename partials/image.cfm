@@ -1,0 +1,1 @@
+<div class="img">#htmlFragment#</div>
