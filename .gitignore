@@ -1,1 +1,6 @@
-temp/
+/temp
+/.project
+/gitbook-sample
+/gitbook-sample.zip
+/.settings
+/settings.xml
