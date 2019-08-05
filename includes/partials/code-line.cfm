@@ -1,3 +1,3 @@
 <cfoutput>
-	<div class="code-line">#innerContent#</div>
+	<div class="code-line"><pre>#innerContent#</pre></div>
 </cfoutput>
