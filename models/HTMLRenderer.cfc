@@ -17,8 +17,8 @@ component accessors="true"{
 	*/
 	function renderBook( required string bookDirectory, required string version ){
 		var TOCData = bookService.getTOC( bookDirectory, version );
-        var bookHTML = '';
-        
+        var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
+            	
         if( version == 'current' ) {
         	version = bookService.getCurrentVersion( bookDirectory );
         }
