@@ -47,30 +47,38 @@ component accessors="true"{
 	* @bookDirectory Absolute path to Gitbook
 	* @version A valid version in the this Gitbook
 	*/
-	struct function getTOC( required string bookDirectory, required string version ){
+	array function getTOC( required string bookDirectory, required string version ){
 		var revisionData = getRevisionData( bookDirectory );
+        var TOCData = [];
 	 
         if( version == 'current' ) {
         	version = revisionData.primaryVersionID;
         }
         
         if( revisionData.versions.keyExists( version ) ){
-            return filterPageTitles( revisionData.versions[ version ].page );
+        	TOCData.append( [
+        		'title' : revisionData.versions[ version ].page.title,
+        		'type' : 'page',
+        		'children' : []
+        	] );
+        	TOCData.append( filterPageTitles( revisionData.versions[ version ].page.pages ), true );
         }
         
-        return {};
+        return TOCData;
 	}
 
 
 	/**
 	* Resursive function for filtering page data 
 	*/
-    private function filterPageTitles(required struct page){
-        var subpages = page.pages.map(filterPageTitles);
-        var pageData = {};
-        pageData[ page.title ] = subpages;
-        if( !subpages.len() ) return page.title;
-        return pageData;
+    private function filterPageTitles(required array pages ){
+        return pages.map( ( v ) => {
+        	return [
+        		'title' : v.title,
+        		'type' : v.kind == 'document' ? 'page' : 'section',
+        		'children' : filterPageTitles( v.pages )
+        	];
+        } );
     }
 
 }
