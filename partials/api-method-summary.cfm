@@ -1,1 +1,0 @@
-<div class="api-method-summary">#htmlFragment#</div>

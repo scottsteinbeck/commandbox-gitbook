@@ -1,1 +1,0 @@
-<div class="api-method-response-example-description">#htmlFragment#</div>
