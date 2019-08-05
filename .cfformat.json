@@ -1,0 +1,12 @@
+{
+    "brackets.padding": true,
+    "strings.quote": "single",
+    "function_call.padding": true,
+    "function_declaration.padding": true,
+    "struct.padding": true,
+    "parentheses.padding": true,
+    "tab_indent": true,
+    "array.padding": true,
+    "keywords.spacing_to_group": "false",
+    "keywords.padding_inside_group": "true"
+}
