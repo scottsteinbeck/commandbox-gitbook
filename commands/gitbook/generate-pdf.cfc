@@ -36,7 +36,7 @@ component {
 	 * @pageContent
 	 */
 	function bodyWrapper( required string pageContent ) {
-		return HTMLRenderer.renderPartial( 'body-wrapper', {}, pageContent );
+		return HTMLRenderer.renderPartial( 'body-wrapper', { 'data': {} }, pageContent );
 	}
 
 

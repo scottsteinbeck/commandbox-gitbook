@@ -37,6 +37,12 @@ component accessors="true" {
 	array function getVersions( required string bookDirectory ) {
 		return getRevisionData( bookDirectory ).versions.reduce( (acc, k, v) => acc.append( v.title ), [] );
 	}
+	/**
+	 * Get asset metadata from the revisions file
+	 */
+	struct function getAssets( required string bookDirectory ) {
+		return getRevisionData( bookDirectory ).assets;
+	}
 
 	/**
 	 * Get current Version of a book

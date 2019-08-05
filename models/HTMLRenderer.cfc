@@ -17,6 +17,7 @@ component accessors="true" {
 	 */
 	function renderBook( required string bookDirectory, required string version ) {
 		var TOCData = bookService.getTOC( bookDirectory, version );
+		var AssetCollection = bookService.getAssets( bookDirectory, version );
 		var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
 
 		if( version == 'current' ) {
@@ -29,7 +30,7 @@ component accessors="true" {
 					// renderSection();
 					bookHTML &= '<hr><h1>#child.title#</h1><hr>';
 				} else if( child.type == 'page' ) {
-					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json' );
+					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
 				}
 				renderChildren( child.children );
 			} );
@@ -41,20 +42,25 @@ component accessors="true" {
 		return bookHTML;
 	}
 
-	function renderpage( string JSONPath ) {
+	function renderpage( string JSONPath, struct AssetCollection ) {
 		var pageJSON = deserializeJSON( fileRead( JSONPath ) );
 
-		return renderNode( pageJSON.document );
+		return renderNode( pageJSON.document, AssetCollection );
 	}
 
-	function renderNode( required struct node ) {
-		var innerContent = ( node.nodes ?: [] ).map( renderNode ).tolist( ' ' );
+	function renderNode( required struct node, struct AssetCollection ) {
+		var innerContent = ( node.nodes ?: [] ).map( (node) => renderNode( node, AssetCollection ) ).tolist( ' ' );
 		if( node.kind == 'document' ) {
 			return renderPartial( 'document', node, innerContent );
 		} else if( node.kind == 'text' ) {
 			return renderTextRanges( node.ranges );
-		} else if( node.kind == 'block' ) {
-			return renderPartial( node.type, node, innerContent );
+		} else if( node.kind == 'block' || node.kind == 'inline' ) {
+			return renderPartial(
+				node.type,
+				node,
+				innerContent,
+				AssetCollection
+			);
 		}
 	}
 
@@ -70,11 +76,20 @@ component accessors="true" {
 			.toList( '' );
 	}
 
-	function renderPartial( required string template, struct node, string innerContent ) {
+
+
+	function renderPartial(
+		required string template,
+		struct node,
+		string innerContent,
+		struct AssetCollection = {}
+	) {
+		if( node.data.keyExists( 'assetID' ) ) node.data.assetMeta = AssetCollection[ node.data.assetID ];
+
 		template = '/commandbox-gitbook/includes/partials/' & template & '.cfm';
 
 		if( !fileExists( template ) ) {
-			return '<div class="missing-element-type">#innerContent#</div>';
+			return '<div class="missing-element-type">[ #node.type# ] #innerContent#</div>';
 		}
 
 		saveContent variable="local.HTML" {
