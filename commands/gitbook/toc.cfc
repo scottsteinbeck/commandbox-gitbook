@@ -23,8 +23,7 @@ component {
 		print.line( bookService.getTOC( bookDirectory, version ) );
 
     }
-
-    
+   
 	function versionsComplete() {
 		try {
 			return bookServuce.getVersions( resolvePath( '' ) );

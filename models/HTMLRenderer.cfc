@@ -3,8 +3,41 @@
 */
 component accessors="true"{
 	
+    property name="bookService" inject="BookService@commandbox-gitbook";
+    
 	function init(){		
 		return this;
+	}
+	
+	/**
+	* 
+	* 
+	* @bookDirectory Absolute path to Gitbook
+	* @version A valid version in the this Gitbook
+	*/
+	function renderBook( required string bookDirectory, required string version ){
+		var TOCData = bookService.getTOC( bookDirectory, version );
+        var bookHTML = '';
+        
+        if( version == 'current' ) {
+        	version = bookService.getCurrentVersion( bookDirectory );
+        }
+                
+        var renderChildren = function( tree ) {
+        	tree.each( ( child ) => {
+        		if( child.type == 'section' ) {
+        			// renderSection();
+        			bookHTML &= '<hr><h1>#child.title#</h1><hr>';
+        		} else if ( child.type == 'page' ) {
+        			bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json' );
+        		}
+       			renderChildren( child.children );
+        	} );
+        };
+        
+        renderChildren( TOCData );
+        
+        return bookHTML;
 	}
 	
 	function renderpage( string JSONPath ) {

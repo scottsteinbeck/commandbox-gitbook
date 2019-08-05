@@ -42,6 +42,15 @@ component accessors="true"{
 	}
 
 	/**
+	* Get current Version of a book
+	* 
+	* @bookDirectory Absolute path to Gitbook
+	*/
+	function getCurrentVersion( required string bookDirectory ){
+		return getRevisionData( bookDirectory ).primaryVersionID;
+	}
+
+	/**
 	* Get struct representing table contents for a version of the book
 	* 
 	* @bookDirectory Absolute path to Gitbook
@@ -55,18 +64,20 @@ component accessors="true"{
         	version = revisionData.primaryVersionID;
         }
         
+        var topPage = revisionData.versions[ version ].page;
+        
         if( revisionData.versions.keyExists( version ) ){
         	TOCData.append( [
-        		'title' : revisionData.versions[ version ].page.title,
+        		'title' : topPage.title,
         		'type' : 'page',
+        		'path' : topPage.path,
         		'children' : []
         	] );
-        	TOCData.append( filterPageTitles( revisionData.versions[ version ].page.pages ), true );
+        	TOCData.append( filterPageTitles( topPage.pages ), true );
         }
         
         return TOCData;
 	}
-
 
 	/**
 	* Resursive function for filtering page data 
@@ -76,6 +87,7 @@ component accessors="true"{
         	return [
         		'title' : v.title,
         		'type' : v.kind == 'document' ? 'page' : 'section',
+        		'path' : v.path,
         		'children' : filterPageTitles( v.pages )
         	];
         } );
