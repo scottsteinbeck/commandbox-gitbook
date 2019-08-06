@@ -130,7 +130,6 @@
      margin: 0;
      padding: 0;
      padding-left: 2em;
-     margin-bottom: 24px;
  }
 
  li {}
@@ -139,6 +138,7 @@
      margin: 0;
      margin-bottom: 0;
      display: inline-block;
+     line-height: 1.5em;
  }
 
  table {
@@ -192,6 +192,10 @@
      font-size: 12px;
      background: #f5f7f9;
      font-weight: bold;
+ }
+
+ li {
+     margin: 5px;
  }
 
  span.lineno {

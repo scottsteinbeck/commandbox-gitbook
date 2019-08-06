@@ -36,28 +36,42 @@ component accessors="true" {
 			} );
 		}
 		;
-
+		bookHTML &= '<h1 class="page">Table of Contents</h1>';
+		bookHTML &= generateTableOfContents( TOCData );
 		renderChildren( TOCData );
 
 		return renderPartial( 'body-wrapper', { 'data': {} }, bookHTML );
-		
 	}
 
-	function renderpage( string JSONPath, struct AssetCollection ) {
+	string function generateTableOfContents( array TOCNodes ) {
+		var TOCContent = '<ul>';
+		TOCNodes.each( (child) => {
+			TOCContent &= '<li>#child.title#';
+			if( child.children.len() ) TOCContent &= generateTableOfContents( child.children );
+			TOCContent &= '</li>';
+		} );
+		TOCContent &= '</ul>';
+		return TOCContent;
+	}
+
+	function renderPage( string JSONPath, struct AssetCollection ) {
 		var pageJSON = deserializeJSON( fileRead( JSONPath ) );
 
 		return renderNode( pageJSON.document, AssetCollection );
 	}
 
-	function renderNode( required struct node, struct AssetCollection, boolean raw=false ) {
-		var innerContent = ( node.nodes ?: [] ).map( (node) => {
-				return renderNode( 
+	function renderNode( required struct node, struct AssetCollection, boolean raw = false ) {
+		var innerContent = ( node.nodes ?: [] )
+			.map( (node) => {
+				return renderNode(
 					node,
 					AssetCollection,
 					// Don't escape HTML if this is a code line, or are ancenstor was one
-					raw || ( node.type ?: '' ) == 'code-line' )
-			} ).tolist( '' );
-			
+					raw || ( node.type ?: '' ) == 'code-line'
+				)
+			} )
+			.tolist( '' );
+
 		if( node.kind == 'document' ) {
 			return renderPartial( 'document', node, innerContent );
 		} else if( node.kind == 'text' ) {
@@ -67,19 +81,18 @@ component accessors="true" {
 				node.type,
 				node,
 				innerContent,
-				AssetCollection				
-			// Block elements need a line break. This is important for code blocks that are in a pre tag.
-			) & ( node.kind == 'block' ? chr(13) & chr(10) : '' );
+				AssetCollection // Block elements need a line break. This is important for code blocks that are in a pre tag.
+			) & ( node.kind == 'block' ? chr( 13 ) & chr( 10 ) : '' );
 		}
 	}
 
-	function renderTextRanges( node, raw=false ) {
+	function renderTextRanges( node, raw = false ) {
 		return node.ranges
 			.map( (r) => {
 				// Code lines are preformatted so don't escape them
 				if( raw ) {
 					var thisText = r.text;
-					if(thisText.len() > 85) thisText = wrap(thisText,85);
+					if( thisText.len() > 85 ) thisText = wrap( thisText, 85 );
 				} else {
 					var thisText = encodeForHTML( r.text );
 				}
