@@ -1,3 +1,3 @@
 <cfoutput>
-	<embed>#innerContent#</embed>
+	<div class="embed">#innerContent#</div>
 </cfoutput>

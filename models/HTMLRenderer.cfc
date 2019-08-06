@@ -26,10 +26,8 @@ component accessors="true" {
 
 		var renderChildren = function(tree) {
 			tree.each( (child) => {
-				if( child.type == 'section' ) {
-					// renderSection();
-					bookHTML &= '<hr><h1>#child.title#</h1><hr>';
-				} else if( child.type == 'page' ) {
+				bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
+				if( child.type == 'page' ) {
 					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
 				}
 				renderChildren( child.children );

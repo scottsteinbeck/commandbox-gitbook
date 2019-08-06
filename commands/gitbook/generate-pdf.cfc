@@ -26,7 +26,10 @@ component {
 		}
 
 		var pageHTML = HTMLRenderer.renderBook( bookDirectory, version );
-
+		cfDocument(format="PDF", filename=resolvePath( "test.pdf" ),  pageType="letter" overwrite=true) {
+			writeOutput(this.bodyWrapper( pageHTML ));
+		}
+		;
 		fileWrite( resolvePath( 'test.html' ), this.bodyWrapper( pageHTML ) );
 	}
 
