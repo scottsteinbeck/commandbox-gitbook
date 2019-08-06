@@ -30,9 +30,10 @@ component accessors="true" singleton {
 		getInterpreter().exec('from pygments import highlight#CR#' 
 			& 'from pygments.lexers import #lexer##CR#'
 			& 'from pygments.formatters import HtmlFormatter#CR#'
-			& 'result = highlight(code, #lexer#(), HtmlFormatter( linenos="inline", filename=fileName ))');
+			& 'Result = None#CR#'
+			& 'Result = highlight(code, #lexer#(), HtmlFormatter( linenos="inline", filename=fileName ))');
 	    		
-		return getInterpreter().get("result", ''.getClass() )
+		return getInterpreter().get("Result", ''.getClass() )
 	}
 
 
@@ -47,7 +48,8 @@ component accessors="true" singleton {
 		if( len( syntax ) ) {
 			try {
 				getInterpreter().exec('from pygments.lexers import get_lexer_by_name#CR#'
-					& 'result = get_lexer_by_name( syntax ).__class__.__name__');
+					& 'lexResult = None#CR#'
+					& 'lexResult = get_lexer_by_name( syntax ).__class__.__name__');
 			} catch( any e ) {
 				// Classnotfound means Pygments coldn't find anything
 				if( !e.getPageException().getRootCause().type.toString() contains 'pygments.util.ClassNotFound' ) {
@@ -56,9 +58,9 @@ component accessors="true" singleton {
 			}
 			
 			// If we found something, return it.
-			var result = getInterpreter().get("result", ''.getClass() );
-			if( !isNull( result ) && len( result ) ) {
-				return result;
+			var lexResult = getInterpreter().get("lexResult", ''.getClass() );
+			if( !isNull( lexResult ) && len( lexResult ) ) {
+				return lexResult;
 			}
 		}
 		
@@ -66,7 +68,8 @@ component accessors="true" singleton {
 		if( len( fileName ) && listLen( fileName, '.' ) > 1 ) {
 			try {
 				getInterpreter().exec('from pygments.lexers import get_lexer_for_filename#CR#'
-					& 'result = get_lexer_for_filename( fileName ).__class__.__name__');					
+					& 'lexResult = None#CR#'
+					& 'lexResult = get_lexer_for_filename( fileName ).__class__.__name__');					
 			} catch( any e ) {
 				// Classnotfound means Pygments coldn't find anything
 				if( !e.getPageException().getRootCause().type.toString() contains 'pygments.util.ClassNotFound' ) {
@@ -75,15 +78,16 @@ component accessors="true" singleton {
 			}
 			
 			// If we found something, return it.
-			var result = getInterpreter().get("result", ''.getClass() );
-			if( !isNull( result ) && len( result ) ) {
-				return result;
+			var lexResult = getInterpreter().get("lexResult", ''.getClass() );
+			if( !isNull( lexResult ) && len( lexResult ) ) {
+				return lexResult;
 			}	
 		}
 		
 		try {
 			getInterpreter().exec('from pygments.lexers import guess_lexer#CR#'
-				& 'result = guess_lexer( code ).__class__.__name__');					
+					& 'lexResult = None#CR#'
+				& 'lexResult = guess_lexer( code ).__class__.__name__');					
 		} catch( any e ) {
 			// Classnotfound means Pygments coldn't find anything
 			if( !e.getPageException().getRootCause().type.toString() contains 'pygments.util.ClassNotFound' ) {
@@ -92,9 +96,9 @@ component accessors="true" singleton {
 		}
 		
 		// If we found something, return it.
-		var result = getInterpreter().get("result", ''.getClass() );
-		if( !isNull( result ) && len( result ) ) {
-			return result;
+		var lexResult = getInterpreter().get("lexResult", ''.getClass() );
+		if( !isNull( lexResult ) && len( lexResult ) ) {
+			return lexResult;
 		} else {
 			return 'TextLexer';
 		}
