@@ -79,6 +79,7 @@ component accessors="true" {
 				// Code lines are preformatted so don't escape them
 				if( raw ) {
 					var thisText = r.text;
+					if(thisText.len() > 85) thisText = wrap(thisText,85);
 				} else {
 					var thisText = encodeForHTML( r.text );
 				}
