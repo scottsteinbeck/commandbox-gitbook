@@ -24,6 +24,7 @@ component accessors="true" singleton {
 		
 		getInterpreter().set("code", code );
 		getInterpreter().set("fileName", fileName );
+		getInterpreter().set("linenos", code.listLen( chr(13)&chr(10) ) > 1 ? 'inline' : False );
 		
 		var lexer = determimeLexer( syntax, code, fileName );
 		
@@ -31,7 +32,7 @@ component accessors="true" singleton {
 			& 'from pygments.lexers import #lexer##CR#'
 			& 'from pygments.formatters import HtmlFormatter#CR#'
 			& 'Result = None#CR#'
-			& 'Result = highlight(code, #lexer#(), HtmlFormatter( linenos="inline", filename=fileName ))');
+			& 'Result = highlight(code, #lexer#(), HtmlFormatter( linenos=linenos, filename=fileName ))');
 	    		
 		return getInterpreter().get("Result", ''.getClass() )
 	}
