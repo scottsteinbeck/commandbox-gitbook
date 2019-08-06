@@ -3,7 +3,10 @@
     "bugs":"",
     "changelog":"",
     "contributors":[],
-    "dependencies":{},
+    "dependencies":{
+        "pygments-2.4.2":"jar:https://search.maven.org/remotecontent?filepath=org/pygments/pygments/2.4.2/pygments-2.4.2.jar",
+        "jython-standalone-2.7.1":"jar:https://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.7.1/jython-standalone-2.7.1.jar"
+    },
     "description":"",
     "devDependencies":{},
     "documentation":"",
@@ -13,7 +16,10 @@
         "test",
         "tests"
     ],
-    "installPaths":{},
+    "installPaths":{
+        "pygments-2.4.2":"lib/pygments-2.4.2/",
+        "jython-standalone-2.7.1":"lib/jython-standalone-2.7.1/"
+    },
     "instructions":"",
     "keywords":"gitbook, pdf, ebook",
     "license":[

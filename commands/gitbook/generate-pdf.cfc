@@ -26,22 +26,11 @@ component {
 		}
 
 		var pageHTML = HTMLRenderer.renderBook( bookDirectory, version );
-		cfDocument(format="PDF", filename=resolvePath( "test.pdf" ),  pageType="letter" overwrite=true) {
-			writeOutput(this.bodyWrapper( pageHTML ));
-		}
-		;
-		fileWrite( resolvePath( 'test.html' ), this.bodyWrapper( pageHTML ) );
+
+		fileWrite( resolvePath( 'test.html' ), pageHTML );
+		
+		document format="pdf" filename=resolvePath( 'test.pdf' ) srcfile=resolvePath( 'test.html' ) overwrite=true;
 	}
-
-
-	/**
-	 * Wrap the page content in a HTML tag and add in styles
-	 * @pageContent
-	 */
-	function bodyWrapper( required string pageContent ) {
-		return HTMLRenderer.renderPartial( 'body-wrapper', { 'data': {} }, pageContent );
-	}
-
 
 	function versionsComplete() {
 		try {
