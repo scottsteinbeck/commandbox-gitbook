@@ -42,7 +42,8 @@ component accessors="true" {
 
 		renderChildren( TOCData );
 
-		return bookHTML;
+		return renderPartial( 'body-wrapper', { 'data': {} }, bookHTML );
+		
 	}
 
 	function renderpage( string JSONPath, struct AssetCollection ) {

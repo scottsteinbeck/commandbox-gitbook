@@ -27,18 +27,10 @@ component {
 
 		var pageHTML = HTMLRenderer.renderBook( bookDirectory, version );
 
-		fileWrite( resolvePath( 'test.html' ), this.bodyWrapper( pageHTML ) );
+		fileWrite( resolvePath( 'test.html' ), pageHTML );
+		
+		document format="pdf" filename=resolvePath( 'test.pdf' ) srcfile=resolvePath( 'test.html' );
 	}
-
-
-	/**
-	 * Wrap the page content in a HTML tag and add in styles
-	 * @pageContent
-	 */
-	function bodyWrapper( required string pageContent ) {
-		return HTMLRenderer.renderPartial( 'body-wrapper', { 'data': {} }, pageContent );
-	}
-
 
 	function versionsComplete() {
 		try {
