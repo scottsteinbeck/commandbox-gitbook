@@ -32,6 +32,7 @@ component accessors="true" {
 					// renderSection();
 					bookHTML &= '<hr><h1>#child.title#</h1><hr>';
 				} else if( child.type == 'page' ) {
+					bookHTML &= '<hr><h1>#child.title#</h1><hr>';
 					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
 				}
 				renderChildren( child.children );
