@@ -1,7 +1,8 @@
 <cfoutput>
-<!--- 	TODO: download asset to local folder, and render from there
-		on download, resize to 8.5in width (max page size)
 	<div class="image"> 
-		<img align="center" src="#(node.data.assetMeta.downloadURL ?: '')#"><div class="caption">#node.data.caption ?: ''#</div>
-	</div>--->
+		<cfset fileName = BookService.getAssetUniqueName(node.data.assetMeta)>
+		<cfset photoBinary = fileReadBinary( "resolvedAssets/#fileName#" ) />
+		<img  align="center" width="100%" src="data:image/*;base64,#toBase64( photoBinary )#" />
+		<div class="caption">#node.data.caption ?: ''#</div>
+</div>
 </cfoutput>

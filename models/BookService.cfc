@@ -104,6 +104,13 @@ component accessors="true" {
 							}
 						);
 					}
+
+					//reduce oversized images
+					if(IsImageFile(targetFilePath)){
+						assetImage = imageRead(targetFilePath);
+						ImageScaleToFit(assetImage,700,'','mediumPerformance');
+						imageWrite(assetImage,targetFilePath,.8,true);
+					}
 				}
 			} );
 		
