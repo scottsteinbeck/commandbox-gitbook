@@ -5,6 +5,7 @@ component accessors="true" {
 
 	property name="bookService" inject="BookService@commandbox-gitbook";
 	property name="wirebox" inject="wirebox";
+	property name="job" inject="interactiveJob";
 
 	function init() {
 		return this;
@@ -17,29 +18,38 @@ component accessors="true" {
 	 * @version A valid version in the this Gitbook
 	 */
 	function renderBook( required string bookDirectory, required string version ) {
-		var TOCData = bookService.getTOC( bookDirectory, version );
-		var AssetCollection = bookService.getAssets( bookDirectory, version );
-		var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
-		bookHTML &= '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )#</style>';
-
-		if( version == 'current' ) {
-			version = bookService.getCurrentVersion( bookDirectory );
-		}
-
-		var renderChildren = function(tree) {
-			tree.each( (child) => {
-				bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
-				if( child.type == 'page' ) {
-					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
-				}
-				renderChildren( child.children );
-			} );
-		}
-		;
+		job.start( 'Render Book as HTML' );
 		
-		bookHTML &= renderTableOfContents( TOCData );
-		renderChildren( TOCData );
+			var TOCData = bookService.getTOC( bookDirectory, version );
+			var AssetCollection = bookService.getAssets( bookDirectory );
+			bookService.resolveAssetsToDisk( bookDirectory, bookDirectory & '/resolvedAssets' )
+			var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
+			bookHTML &= '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )#</style>';
+	
+			if( version == 'current' ) {
+				version = bookService.getCurrentVersion( bookDirectory );
+			}
+			
+			job.start( 'Render Pages' );
+			
+				var renderChildren = function(tree) {
+					tree.each( (child) => {
+						job.addLog( child.title );
+						bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
+						if( child.type == 'page' ) {
+							bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
+						}
+						renderChildren( child.children );
+					} );
+				};
+				
+				bookHTML &= renderTableOfContents( TOCData );
+				
+				renderChildren( TOCData );
+			
+			job.complete();
 
+		job.complete();
 		return renderPartial( 'body-wrapper', { 'data': {} }, bookHTML );
 	}
 
