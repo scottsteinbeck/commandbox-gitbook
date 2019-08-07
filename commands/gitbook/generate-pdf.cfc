@@ -3,8 +3,8 @@
  */
 component {
 
-	property name="HTMLRenderer" inject="HTMLRenderer@commandbox-gitbook";
-	property name="bookService" inject="BookService@commandbox-gitbook";
+	property name='HTMLRenderer' inject='HTMLRenderer@commandbox-gitbook';
+	property name='bookService' inject='BookService@commandbox-gitbook';
 
 	/**
 	 * @bookDirectory Directory where the JSON export is for a Gitbook
@@ -28,19 +28,19 @@ component {
 		// This is sort of a dumb job step, just created it to have a wrapper since the PDF bit isn't in a service yet
 		job.start( 'Processing' );
 
-			var pageHTML = HTMLRenderer.renderBook( bookDirectory, version );
-	
-			fileWrite( resolvePath( 'test.html' ), pageHTML );
-			
-			
-			// TODO: Find a proper service to put this in.
-			job.start( 'Building PDF' );
-				job.addLog( 'Writing PDF to #resolvePath( 'test.pdf' )#' );
-				document format="pdf" filename=resolvePath( 'test.pdf' ) srcfile=resolvePath( 'test.html' ) overwrite=true;
-			job.complete();
-			
+		var pageHTML = HTMLRenderer.renderBook( bookDirectory, version );
+
+		fileWrite( resolvePath( 'test.html' ), pageHTML );
+
+
+		// TODO: Find a proper service to put this in.
+		job.start( 'Building PDF' );
+		job.addLog( 'Writing PDF to #resolvePath( 'test.pdf' )#' );
+		document format='pdf' filename=resolvePath( 'test.pdf' ) srcfile=resolvePath( 'test.html' ) overwrite=true;
 		job.complete();
-		
+
+		job.complete();
+
 		print
 			.line()
 			.greenLine( 'Complete!' )

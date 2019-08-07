@@ -1,12 +1,12 @@
 /**
  * I render HTML for a book
  */
-component accessors="true" {
+component accessors='true' {
 
-	property name="bookService" inject="BookService@commandbox-gitbook";
-	property name="wirebox" inject="wirebox";
-	property name="job" inject="interactiveJob";
-	property name="progressBarGeneric" inject="progressBarGeneric";
+	property name='bookService' inject='BookService@commandbox-gitbook';
+	property name='wirebox' inject='wirebox';
+	property name='job' inject='interactiveJob';
+	property name='progressBarGeneric' inject='progressBarGeneric';
 
 	function init() {
 		return this;
@@ -20,56 +20,62 @@ component accessors="true" {
 	 */
 	function renderBook( required string bookDirectory, required string version ) {
 		job.start( 'Render Book as HTML' );
-		
-			var TOCData = bookService.getTOC( bookDirectory, version );
-			var AssetCollection = bookService.getAssets( bookDirectory );
-			bookService.resolveAssetsToDisk( bookDirectory, bookDirectory & '/resolvedAssets' )
-			var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
-			bookHTML &= '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )#</style>';
-	
-			if( version == 'current' ) {
-				version = bookService.getCurrentVersion( bookDirectory );
-			}
-			
-			job.start( 'Render Pages' );			
-			
-				var countChildren = function(tree) {
-					var thisCount = 0;
-					tree.each( (child) => {
-						if( child.type == 'page' ) {
-							thisCount++;
-						}
-						thisCount += countChildren( child.children );
-					} );
-					return thisCount;
-				};
-				var totalPages = countChildren( TOCData );
-				var currentCount = 0;
-				progressBarGeneric.update( percent=0, currentCount=0, totalCount=totalPages );
-			
-				var renderChildren = function(tree) {
-					tree.each( (child) => {
-						job.addLog( child.title );
-						bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
-						if( child.type == 'page' ) {
-							currentCount++;
-							bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
-							progressBarGeneric.update( percent=(currentCount/totalPages)*100, currentCount=currentCount, totalCount=totalPages );
-						}
-						renderChildren( child.children );
-					} );
-				};
-				
-				bookHTML &= renderTableOfContents( TOCData );
-				
-				renderChildren( TOCData );
-				
-				progressBarGeneric.clear();
-				
-			job.complete();
+
+		var TOCData = bookService.getTOC( bookDirectory, version );
+		var AssetCollection = bookService.getAssets( bookDirectory );
+		bookService.resolveAssetsToDisk( bookDirectory, bookDirectory & '/resolvedAssets' )
+		var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
+		bookHTML &= '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )#</style>';
+
+		if( version == 'current' ) {
+			version = bookService.getCurrentVersion( bookDirectory );
+		}
+
+		job.start( 'Render Pages' );
+
+		var countChildren = function(tree) {
+			var thisCount = 0;
+			tree.each( (child) => {
+				if( child.type == 'page' ) {
+					thisCount++;
+				}
+				thisCount += countChildren( child.children );
+			} );
+			return thisCount;
+		}
+		;
+		var totalPages = countChildren( TOCData );
+		var currentCount = 0;
+		progressBarGeneric.update( percent = 0, currentCount = 0, totalCount = totalPages );
+
+		var renderChildren = function(tree) {
+			tree.each( (child) => {
+				job.addLog( child.title );
+				bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
+				if( child.type == 'page' ) {
+					currentCount++;
+					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
+					progressBarGeneric.update(
+						percent = ( currentCount / totalPages ) * 100,
+						currentCount = currentCount,
+						totalCount = totalPages
+					);
+				}
+				renderChildren( child.children );
+			} );
+		}
+		;
+
+		bookHTML &= renderTableOfContents( TOCData );
+
+		renderChildren( TOCData );
+
+		progressBarGeneric.clear();
 
 		job.complete();
-		return renderPartial( 'body-wrapper', { 'data': {} }, bookHTML );
+
+		job.complete();
+		return renderPartial( 'body-wrapper', { 'data' : {} }, bookHTML );
 	}
 
 	string function renderTableOfContents( array TOCNodes ) {
@@ -157,7 +163,7 @@ component accessors="true" {
 			return '<div class="missing-element-type">[ #node.type# ] #innerContent#</div>';
 		}
 
-		saveContent variable="local.HTML" {
+		saveContent variable='local.HTML' {
 			include template;
 		}
 		return local.HTML

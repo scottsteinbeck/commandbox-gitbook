@@ -3,7 +3,7 @@
  */
 component {
 
-	property name="BookService" inject="BookService@commandbox-gitbook";
+	property name='BookService' inject='BookService@commandbox-gitbook';
 
 	/**
 	 * @bookDirectory Directory where the JSON export is for a Gitbook

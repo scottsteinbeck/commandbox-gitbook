@@ -1,11 +1,11 @@
 /**
  * I am the BookService and I handle getting basic data about a Gitbook from an export folder.
  */
-component accessors="true" {
+component accessors='true' {
 
-	property name="job"						inject="interactiveJob";
-	property name="progressableDownloader" 	inject="ProgressableDownloader";
-	property name="progressBar" 			inject="ProgressBar";
+	property name='job' inject='interactiveJob';
+	property name='progressableDownloader' inject='ProgressableDownloader';
+	property name='progressBar' inject='ProgressBar';
 
 	function init() {
 		return this;
@@ -35,7 +35,7 @@ component accessors="true" {
 	string function getHTTPCodeDesc( httpCode ) {
 		var httpCodes = this.getHTTPCodes();
 		if( httpCodes.keyExists( httpCode ) ) return httpCodes[ httpCode ];
-		if( httpCodes.keyExists( left( httpCode, 1) & '00' ) ) return httpCodes[ left( httpCode, 1) & '00' ];
+		if( httpCodes.keyExists( left( httpCode, 1 ) & '00' ) ) return httpCodes[ left( httpCode, 1 ) & '00' ];
 		return '';
 	}
 
@@ -60,7 +60,7 @@ component accessors="true" {
 	array function getVersions( required string bookDirectory ) {
 		return getRevisionData( bookDirectory ).versions.reduce( (acc, k, v) => acc.append( v.title ), [] );
 	}
-	
+
 	/**
 	 * Get asset metadata from the revisions file
 	 *
@@ -69,7 +69,7 @@ component accessors="true" {
 	struct function getAssets( required string bookDirectory ) {
 		return getRevisionData( bookDirectory ).assets;
 	}
-	
+
 	/**
 	 * Generate unique file name from asset metadata
 	 *
@@ -82,7 +82,7 @@ component accessors="true" {
 	string function getAssetUniqueName( required struct assetData ) {
 		return 'asset' & assetData.uid & '-' & assetData.name
 	}
-	
+
 	/**
 	 * Takes asset metadata and ensures each of the assets are avaialble locally
 	 * in a folder of your choice.  Unique assets will be transfered from the assets
@@ -92,48 +92,54 @@ component accessors="true" {
 	 */
 	function resolveAssetsToDisk( required string bookDirectory, required string assetDirectory ) {
 		job.start( 'Building Assets' );
-		
-			var assetCollection = getAssets( bookDirectory );
-			
-			directoryCreate( assetDirectory, true, true )
-		
-			// Find assets in the JSON that have the same name.  We'll need to re-download these!
-			var dupeAssets = assetCollection
-				.reduce( ( dupeAssets, k, v ) => {
-					dupeAssets[ v.name ] = dupeAssets[ v.name ] ?: 0;
-					dupeAssets[ v.name ]++;
-					return dupeAssets;
-				}, {} )
-				.filter( ( k, v ) => v > 1 );
-				
-			// Loop over each asset and transfer it from the assets folder, or download as neccessary
-			assetCollection.each( ( assetID, assetData ) => {
-				job.addLog( assetData.name );
-				var sourcePath = bookDirectory & '/assets/' & assetData.name;
-				var targetFilePath = assetDirectory & '/' & getAssetUniqueName( assetData );
-				if( !fileExists( targetFilePath ) ) {
-					if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
-						fileCopy( sourcePath, targetFilePath );
-					} else {
-						var result = progressableDownloader.download(
-							assetData.downloadURL,
-							targetFilePath,
-							function( status ) {
-								progressBar.update( argumentCollection = status );
-							}
-						);
-					}
 
-					//reduce oversized images
-					if(IsImageFile(targetFilePath)){
-						assetImage = imageRead(targetFilePath);
-						if(assetImage.getWidth() > 700) ImageScaleToFit(assetImage,700,'','mediumPerformance');
-						imageWrite(assetImage,targetFilePath,.8,true);
-					}
+		var assetCollection = getAssets( bookDirectory );
+
+		directoryCreate( assetDirectory, true, true )
+
+		// Find assets in the JSON that have the same name.  We'll need to re-download these!
+		var dupeAssets = assetCollection
+			.reduce( (dupeAssets, k, v) => {
+				dupeAssets[ v.name ] = dupeAssets[ v.name ] ?: 0;
+				dupeAssets[ v.name ]++;
+				return dupeAssets;
+			}, {} )
+			.filter( (k, v) => v > 1 );
+
+		// Loop over each asset and transfer it from the assets folder, or download as neccessary
+		assetCollection.each( (assetID, assetData) => {
+			job.addLog( assetData.name );
+			var sourcePath = bookDirectory & '/assets/' & assetData.name;
+			var targetFilePath = assetDirectory & '/' & getAssetUniqueName( assetData );
+			if( !fileExists( targetFilePath ) ) {
+				if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
+					fileCopy( sourcePath, targetFilePath );
+				} else {
+					var result = progressableDownloader.download(
+						assetData.downloadURL,
+						targetFilePath,
+						function(status) {
+							progressBar.update( argumentCollection = status );
+						}
+					);
 				}
-			} );
-		
-		job.complete();		
+
+				// reduce oversized images
+				if( isImageFile( targetFilePath ) ) {
+					assetImage = imageRead( targetFilePath );
+					if( assetImage.getWidth() > 700 )
+						imageScaleTofit(
+							assetImage,
+							700,
+							'',
+							'mediumPerformance'
+						);
+					imageWrite( assetImage, targetFilePath, .8, true );
+				}
+			}
+		} );
+
+		job.complete();
 	}
 
 	/**
@@ -173,7 +179,7 @@ component accessors="true" {
 		}
 
 		job.complete();
-		
+
 		return TOCData;
 	}
 

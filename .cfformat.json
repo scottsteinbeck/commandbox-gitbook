@@ -8,5 +8,7 @@
     "tab_indent": true,
     "array.padding": true,
     "keywords.spacing_to_group": "false",
-    "keywords.padding_inside_group": "true"
+    "keywords.padding_inside_group": "true",
+    "strings.attributes.quote": "single",
+    "struct.separator": " : "
 }
