@@ -6,6 +6,7 @@ component accessors="true" {
 	property name="bookService" inject="BookService@commandbox-gitbook";
 	property name="wirebox" inject="wirebox";
 	property name="job" inject="interactiveJob";
+	property name="progressBarGeneric" inject="progressBarGeneric";
 
 	function init() {
 		return this;
@@ -30,14 +31,30 @@ component accessors="true" {
 				version = bookService.getCurrentVersion( bookDirectory );
 			}
 			
-			job.start( 'Render Pages' );
+			job.start( 'Render Pages' );			
+			
+				var countChildren = function(tree) {
+					var thisCount = 0;
+					tree.each( (child) => {
+						if( child.type == 'page' ) {
+							thisCount++;
+						}
+						thisCount += countChildren( child.children );
+					} );
+					return thisCount;
+				};
+				var totalPages = countChildren( TOCData );
+				var currentCount = 0;
+				progressBarGeneric.update( percent=0, currentCount=0, totalCount=totalPages );
 			
 				var renderChildren = function(tree) {
 					tree.each( (child) => {
 						job.addLog( child.title );
 						bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
 						if( child.type == 'page' ) {
+							currentCount++;
 							bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
+							progressBarGeneric.update( percent=(currentCount/totalPages)*100, currentCount=currentCount, totalCount=totalPages );
 						}
 						renderChildren( child.children );
 					} );
@@ -46,7 +63,9 @@ component accessors="true" {
 				bookHTML &= renderTableOfContents( TOCData );
 				
 				renderChildren( TOCData );
-			
+				
+				progressBarGeneric.clear();
+				
 			job.complete();
 
 		job.complete();
