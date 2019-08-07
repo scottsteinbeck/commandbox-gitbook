@@ -40,6 +40,12 @@ component {
 			job.complete();
 			
 		job.complete();
+		
+		print
+			.line()
+			.greenLine( 'Complete!' )
+			.line()
+			.yellowLine( 'PDF written to #resolvePath( 'test.pdf' )#' );
 	}
 
 	function versionsComplete() {
