@@ -1,11 +1,13 @@
 <cfoutput>
 	<div class="api-method-parameter">
-		<table class="paramTable">
+		<table class="param-table">
 			<tr>
-				<td width="100"><div class="valDesc">Name</div>#node.data.name#&nbsp;</td>
-				<td width="100"><div class="valDesc">Type</div>#node.data.type#</td>
-				<td width="100"><div class="valDesc">Required</div>#node.data.required ?: false#</td>
-				<td><div class="valDesc">Desc</div>#innerContent#</td> 
+				<td width="20%">
+					<div class="param-name">#node.data.name#</div>
+					<div class="param-required param-required-#(node.data.required ?: false)#">#((node.data.required ?: false) ? "REQUIRED" : "OPTIONAL")#</div>
+				</td>
+				<td width="20%"><div class="param-type">#node.data.type#</div></td>
+				<td width=""><div class="param-desc">#innerContent#</div></td> 
 			</tr>
 		</table>
 	</div>

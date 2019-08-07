@@ -1,3 +1,3 @@
 <cfoutput>
-	<strike>#innerContent#</strike>
+	<del>#innerContent#</del>
 </cfoutput>

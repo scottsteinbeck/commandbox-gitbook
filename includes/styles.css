@@ -1,3 +1,4 @@
+ /*
  html,
  body,
  div,
@@ -84,7 +85,14 @@
      font-size: 100%;
      font: inherit;
      vertical-align: baseline;
- }
+ }*/
+
+strong {
+    font-weight: bold;
+}
+em {
+    font-style: italic;
+}
 
  body {
      font-family: Arial,
@@ -103,22 +111,33 @@
  h3,
  h4,
  h5 {
-     margin: 10px 0;
+     margin: 20px 0;
+     font-weight: bold;
  }
-
+ h1 {
+    border-top: 2px solid #f1f1f1;
+    padding: 20px 0 0;
+}
  h1,
  h1 .code {
      font-size: 1.5em;
  }
 
+ h1.section {
+    font-size: 14px;
+    text-align: right;
+    color: #adadad;
+    border: none;
+ }
  h1.page {
      text-align: center;
      font-size: 2.2em;
      font-weight: bold;
+     border: none;
  }
 
  blockquote {
-     margin: 0px 0px 24px;
+     margin: 24px 0px ;
      padding: 0px 0px 0px 12px;
      border-left: 4px solid #e6ecf1;
      border-color: #e6ecf1;
@@ -127,12 +146,22 @@
  ul,
  ol {
      color: #3B454E;
-     margin: 0;
-     padding: 0;
-     padding-left: 2em;
+     margin: 0 0 10px 0;
+     padding: 0 0 0 2em;
  }
 
  li {}
+
+ li.list-item.list-item-check {
+    padding-left: 3px;
+    margin: 2px 0 0 -21px;
+    list-style: none;
+}
+
+li ul li.list-item.list-item-check {
+    margin: 2px 0 0 -10px;
+    list-style: none;
+}
 
  p {
      margin: 0;
@@ -143,8 +172,15 @@
 
  table {
      width: 100%;
-     background: #9daab6;
+     background: #bfcedc;
      page-break-inside: auto;
+     margin: -2px 0;
+ }
+
+ table.param-table {
+     background:transparent;
+     page-break-inside: auto;
+     margin: -2px 0;
  }
 
  tr {
@@ -163,23 +199,12 @@
  }
 
  table tr td {
-     width: auto;
      padding: 8px;
      border-top: none;
      border-right: none;
      border-bottom: none;
  }
 
- table.paramTable {
-     table-layout: fixed;
- }
-
- table.paramTable tr:first-child td {
-     color: black;
-     font-size: 12px;
-     font-weight: 500;
-     border-bottom: none;
- }
 
  table tr td p {
      font-family: Arial,
@@ -213,7 +238,9 @@
      border-radius: 5px;
      display: inline-block;
  }
-
+ .tabs {
+    padding: 10px 0;
+}
  .code-tab {
      tab-size: 4;
      font-size: 85%;
@@ -228,6 +255,7 @@
 
  .code-line {
      font-size: 13px;
+     page-break-inside: avoid;
  }
 
  .caption {
@@ -238,17 +266,12 @@
  }
 
  .math {
-     tab-size: 4;
-     font-size: 85%;
-     overflow-x: auto;
-     font-family: Arial,
-         sans-serif;
-     line-height: 1.7;
-     counter-reset: line 0;
-     background-color: #f5f7f9;
-     border: 1px solid #dedede;
-     margin: 4px 0;
-     padding: 9px 4px;
+    font-size: 16px;
+    font-family: monospace;
+    background-color: #f5f7f9;
+    border: 1px solid #dedede;
+    margin: 4px 0;
+    padding: 9px;
  }
 
  .hint {
@@ -257,12 +280,54 @@
      background-color: #f5f7f9;
      margin: 32px 0px;
      padding: 14px 24px;
-     border-left: 4px solid #26cb7c;
+     border-left: 6px solid #26cb7c;
  }
 
+ .hint.hint-success{ border-left-color: #26cb7c}
+ .hint.hint-info{ border-left-color: #3884ff}
+ .hint.hint-warn{ border-left-color: #f77d05}
+ .hint.hint-error{ border-left-color: #ff4642}
+
+ .hint p {
+    display: inline-block;
+    padding: 0;
+    vertical-align: bottom;
+}
+
+ .hint img {
+    width: 32px;
+    vertical-align: bottom;
+    display: inline-block;
+    margin: -3px 0;
+}
+
+ .api-method-type {
+    background: #26cb7c;
+    border-radius: 10px;
+    color: white;
+    display: inline-block;
+    font-size: 14px;
+    padding: 2px 8px;
+    text-transform: uppercase;
+    margin: 3px 6px;
+    vertical-align: text-bottom;
+ }
+ .api-method-type-get { background:#3784ff}
+ .api-method-type-post { background: #27cb7c}
+ .api-method-type-put { background: #f77c06}
+ .api-method-type-delete { background: #ff4642}
+ .api-method-type-patch { background: #01d1eb}
+ .api-method-type-head { background: #a44eed}
+ .api-method-type-options { background: #ffd039}
+ 
+ .api-method-response-example-description {
+    padding: 5px 0;
+    color: #999;
+}
  .api-method-summary {
      font-size: 24px;
      font-weight: bold;
+     display: inline-block;
  }
 
  .api-method-description {
@@ -280,22 +345,26 @@
  }
 
  .api-method-path-parameters,
- .api-method-query-parameters {
+ .api-method-query-parameters,
+ .api-method-headers {
      border: 1px solid #e4e4e4;
      padding: 14px;
 
  }
 
  .api-method-title {
-     font-size: 16px;
-     color: #848484;
-     font-weight: lighter;
-     padding: 7px 0 3px;
+    font-size: 17px;
+    color: #848484;
+    font-weight: normal;
+    padding: 7px 0;
  }
 
  .valDesc {
-     color: #999;
-     font-style: italic;
+    color: #999;
+    font-style: italic;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.5em;
  }
 
  .image {
@@ -307,19 +376,64 @@
      background: red;
      color: white;
  }
-
- .status-code-200 .status-bullet {
-     background: #00d400;
+ .status-code {
+    padding: 10px 0;
+}
+ .status-code-2 .status-bullet {
+    color: #00d400;
  }
 
- .status-code-302 .status-bullet {
-     background: #ff9d3d;
+ .status-code-5 .status-bullet
+ {
+    color: #df0101;
+ }
+
+
+ .status-code-3 .status-bullet,
+ .status-code-4 .status-bullet,
+ .status-code-1 .status-bullet
+ {
+     color: #ff9d3d;
  }
 
  .status-bullet {
-     width: 10px;
-     height: 10px;
-     display: inline-block;
-     background: #00d400;
-     margin: 0 5px;
+    display: inline-block;
+    font-size: 31px;
+    vertical-align: text-bottom;
+    line-height: 0.7em;
  }
+
+ .param-name {
+    font-size: 16px;
+    font-weight: normal;
+    color: #636363;
+}
+
+ .param-required {
+    font-size: 9px;
+    color: #b5b5b5;
+    font-weight: normal;
+    line-height: 1.8em;
+    
+}
+
+ .param-required-true {
+    color: #ff4642;
+    
+}
+.param-type {
+    font-size: 15px;
+    font-weight: normal;
+    background: #f1f1f1;
+    display: inline-block;
+    padding: 5px;
+    font-family: monospace;
+    border-radius: 10px;
+    color: #4b4b4b;
+}
+
+.param-desc {
+    font-size: 16px;
+    font-weight: normal;
+    color: #4b4b4b;
+}

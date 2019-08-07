@@ -1,3 +1,3 @@
 <cfoutput>
-	<i>#innerContent#</i>
+	<em>#innerContent#</em>
 </cfoutput>
