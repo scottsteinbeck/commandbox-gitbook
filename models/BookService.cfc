@@ -21,6 +21,25 @@ component accessors="true" {
 	}
 
 	/**
+	 * Get raw http codes data from httpcodes.json
+	 *
+	 */
+	struct function getHTTPCodes() {
+		return deserializeJSON( fileRead( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ) ) );
+	}
+
+	/**
+	 * Lookup http code and return description if available
+	 *
+	 */
+	string function getHTTPCodeDesc( httpCode ) {
+		var httpCodes = this.getHTTPCodes();
+		if( httpCodes.keyExists( httpCode ) ) return httpCodes[ httpCode ];
+		if( httpCodes.keyExists( left( httpCode, 1) & '00' ) ) return httpCodes[ left( httpCode, 1) & '00' ];
+		return '';
+	}
+
+	/**
 	 * Get raw revision data from revisions.json
 	 *
 	 * @bookDirectory Absolute path to Gitbook
