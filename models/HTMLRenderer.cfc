@@ -36,18 +36,26 @@ component accessors="true" {
 			} );
 		}
 		;
-		bookHTML &= '<h1 class="page">Table of Contents</h1>';
-		bookHTML &= generateTableOfContents( TOCData );
+		
+		bookHTML &= renderTableOfContents( TOCData );
 		renderChildren( TOCData );
 
 		return renderPartial( 'body-wrapper', { 'data': {} }, bookHTML );
 	}
 
-	string function generateTableOfContents( array TOCNodes ) {
+	string function renderTableOfContents( array TOCNodes ) {
+		var TOCPage = '<div class="document">';
+		TOCPage &= '<h1 class="page">Table of Contents</h1>';
+		TOCPage &= generateTOCNode( TOCNodes );
+		TOCPage &= '</div>';
+		return TOCPage;
+	}
+
+	string function generateTOCNode( array TOCNodes ) {
 		var TOCContent = '<ul>';
 		TOCNodes.each( (child) => {
 			TOCContent &= '<li>#child.title#';
-			if( child.children.len() ) TOCContent &= generateTableOfContents( child.children );
+			if( child.children.len() ) TOCContent &= generateTOCNode( child.children );
 			TOCContent &= '</li>';
 		} );
 		TOCContent &= '</ul>';
