@@ -147,6 +147,10 @@
      border-color: #e6ecf1;
  }
 
+ img {
+     page-break-inside: avoid;
+ }
+
  ul,
  ol {
      color: #3B454E;
@@ -155,6 +159,7 @@
  }
 
  li {}
+
 
  li.list-item.list-item-check {
      padding-left: 3px;
