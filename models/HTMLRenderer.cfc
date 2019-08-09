@@ -7,6 +7,7 @@ component accessors='true' {
 	property name='wirebox' inject='wirebox';
 	property name='job' inject='interactiveJob';
 	property name='progressBarGeneric' inject='progressBarGeneric';
+	property name='FilesystemUtil' inject='Filesystem';
 
 	function init() {
 		return this;
@@ -18,14 +19,64 @@ component accessors='true' {
 	 * @bookDirectory Absolute path to Gitbook
 	 * @version A valid version in the this Gitbook
 	 */
+	function renderBookPDF( required string bookDirectory, required string version ) {
+		
+		var bodyTop = renderPartial( 'body-wrapper-top', { 'data' : {
+			styles = [
+				// TODO: add user styles by convention such that they override built in styles
+				fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) ),
+				// TODO: make this configurable
+				fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )
+			]
+		} } );
+		
+		var bodyBottom = renderPartial( 'body-wrapper-bottom', { 'data' : {} } );
+		
+		var pages = renderBook( bookDirectory, version );
+		
+		fileWrite( filesystemUtil.resolvePath( 'test.html' ), bodyTop & pages.toList( ' ' ) & bodyBottom );
+
+		job.start( 'Building PDF' );
+			job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
+		
+			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) srcfile=filesystemUtil.resolvePath( 'test.html' ) overwrite=true bookmark=true localurl=true {
+				// Putting this inside of a section breaks the page numbering due to Lucee bug
+				documentitem type="footer" evalAtPrint=false {
+					echo( 'Page #cfdocument.currentpagenumber#' );
+				}
+				echo( bodyTop );
+				for( var page in pages ) {
+				// sections break page numbering
+				//	documentSection name='my page' {
+						documentitem type="header" {
+							echo( 'My header' );
+						}
+						echo( page );
+					}
+				//}
+				echo( bodyBottom );
+			}
+			
+		job.complete();
+
+		
+	}
+
+	/**
+	 *
+	 *
+	 * @bookDirectory Absolute path to Gitbook
+	 * @version A valid version in the this Gitbook
+	 */
 	function renderBook( required string bookDirectory, required string version ) {
+		// I hate this, but I don't feel like passing this down 37 methods just to make it avaialble to the partials
+		variables.bookDirectory = arguments.bookDirectory;
 		job.start( 'Render Book as HTML' );
 
 		var TOCData = bookService.getTOC( bookDirectory, version );
 		var AssetCollection = bookService.getAssets( bookDirectory );
 		bookService.resolveAssetsToDisk( bookDirectory, bookDirectory & '/resolvedAssets' )
-		var bookHTML = '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )#</style>';
-		bookHTML &= '<style type="text/css">#fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )#</style>';
+		var pages = [];
 
 		if( version == 'current' ) {
 			version = bookService.getCurrentVersion( bookDirectory );
@@ -51,10 +102,10 @@ component accessors='true' {
 		var renderChildren = function(tree) {
 			tree.each( (child) => {
 				job.addLog( child.title );
-				bookHTML &= '<h1 class="#child.type#">#child.title#</h1>';
+				pages.append( '<h1 class="#child.type#">#child.title#</h1>' );
 				if( child.type == 'page' ) {
 					currentCount++;
-					bookHTML &= renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection );
+					pages.append( renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection ) );
 					progressBarGeneric.update(
 						percent = ( currentCount / totalPages ) * 100,
 						currentCount = currentCount,
@@ -66,7 +117,7 @@ component accessors='true' {
 		}
 		;
 
-		bookHTML &= renderTableOfContents( TOCData );
+		pages.append( renderTableOfContents( TOCData ) );
 
 		renderChildren( TOCData );
 
@@ -75,7 +126,8 @@ component accessors='true' {
 		job.complete();
 
 		job.complete();
-		return renderPartial( 'body-wrapper', { 'data' : {} }, bookHTML );
+		
+		return pages
 	}
 
 	string function renderTableOfContents( array TOCNodes ) {
@@ -152,7 +204,7 @@ component accessors='true' {
 	function renderPartial(
 		required string template,
 		struct node,
-		string innerContent,
+		string innerContent='',
 		struct AssetCollection = {}
 	) {
 		if( node.data.keyExists( 'assetID' ) ) node.data.assetMeta = AssetCollection[ node.data.assetID ];
