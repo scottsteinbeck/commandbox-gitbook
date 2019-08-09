@@ -39,7 +39,7 @@ component accessors='true' {
 		job.start( 'Building PDF' );
 			job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
 		
-			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) srcfile=filesystemUtil.resolvePath( 'test.html' ) overwrite=true bookmark=true localurl=true {
+			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) overwrite=true bookmark=true localurl=true {
 				documentitem type="header" {
 					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title: bookTitle } } ) );
 				}
