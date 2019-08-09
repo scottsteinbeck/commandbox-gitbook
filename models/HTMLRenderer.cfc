@@ -23,10 +23,10 @@ component accessors='true' {
 		var bookTitle = bookService.getBookTitle( bookDirectory );
 		var bodyTop = renderPartial( 'body-wrapper-top', { 'data' : {
 			styles = [
-				// TODO: add user styles by convention such that they override built in styles
-				fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) ),
 				// TODO: make this configurable
-				fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) )
+				fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) ),
+				// TODO: add user styles by convention such that they override built in styles
+				fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )
 			]
 		} } );
 		
@@ -150,8 +150,9 @@ component accessors='true' {
 	}
 
 	function renderPage( string JSONPath, struct AssetCollection ) {
-		var pageJSON = deserializeJSON( fileRead( JSONPath ) );
-
+		var pageRaw = fileRead( JSONPath );
+		if(left(trim(pageRaw),1) != '{') return '';
+		var pageJSON = deserializeJSON( pageRaw );
 		return renderNode( pageJSON.document, AssetCollection );
 	}
 
