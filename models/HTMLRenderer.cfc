@@ -40,17 +40,17 @@ component accessors='true' {
 			job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
 		
 			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) srcfile=filesystemUtil.resolvePath( 'test.html' ) overwrite=true bookmark=true localurl=true {
+				documentitem type="header" {
+					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument } } ) );
+				}
 				// Putting this inside of a section breaks the page numbering due to Lucee bug
 				documentitem type="footer" evalAtPrint=false {
-					echo( 'Page #cfdocument.currentpagenumber#' );
+					echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument } } ) );
 				}
 				echo( bodyTop );
 				for( var page in pages ) {
 				// sections break page numbering
 				//	documentSection name='my page' {
-						documentitem type="header" {
-							echo( 'My header' );
-						}
 						echo( page );
 					}
 				//}
