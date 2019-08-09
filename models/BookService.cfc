@@ -29,6 +29,18 @@ component accessors='true' {
 	}
 
 	/**
+	 * Get book Title from space.json file
+	 *
+	 */
+	string function getBookTitle( required string bookDirectory ) {
+		if( fileExists( bookDirectory & '/space.json' )){
+			var spacesObj = deserializeJSON( fileRead( bookDirectory & '/space.json' ) );
+			return spacesObj.name;
+		}
+		return ''
+	}
+
+	/**
 	 * Lookup http code and return description if available
 	 *
 	 */

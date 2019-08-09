@@ -20,7 +20,7 @@ component accessors='true' {
 	 * @version A valid version in the this Gitbook
 	 */
 	function renderBookPDF( required string bookDirectory, required string version ) {
-		
+		var bookTitle = bookService.getBookTitle( bookDirectory );
 		var bodyTop = renderPartial( 'body-wrapper-top', { 'data' : {
 			styles = [
 				// TODO: add user styles by convention such that they override built in styles
@@ -41,7 +41,7 @@ component accessors='true' {
 		
 			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) srcfile=filesystemUtil.resolvePath( 'test.html' ) overwrite=true bookmark=true localurl=true {
 				documentitem type="header" {
-					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument } } ) );
+					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title: bookTitle } } ) );
 				}
 				// Putting this inside of a section breaks the page numbering due to Lucee bug
 				documentitem type="footer" evalAtPrint=false {
