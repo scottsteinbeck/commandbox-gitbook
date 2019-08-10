@@ -175,8 +175,10 @@ component accessors='true' {
 	function resolveURLEmbedData( required string embedURL ) {
 		job.addLog( 'Resolving embed data for URL: #embedURL#' );
 		
+		// This Java class gives us handy access to the host part of the URL without custom parsing
 		var jURL = createObject( 'java', 'java.net.URL' ).init( embedURL );
-			
+		
+		// Our default return data if the try below goes south
 		var embedData = {
 			embdedHost = jURL.getHost(),
 			pageTitle = jURL.getHost(),
@@ -184,6 +186,7 @@ component accessors='true' {
 		};
 
 		try {
+			// Account for any proxy config settings the user may have in CommandBox
 			var proxyServer=ConfigService.getSetting( 'proxy.server', '' )
 			var proxyPort=ConfigService.getSetting( 'proxy.port', '' )
 			var proxyUser=ConfigService.getSetting( 'proxy.user', '' )
@@ -203,17 +206,20 @@ component accessors='true' {
 				}
 			}
 			
-			http url=embedURL 
-				throwOnError=false 
+			// Hit the URL of the link
+			http url=embedURL
+				throwOnError=true 
 				result="local.httpResult" 
-				timeout=20
+				timeout=5
 				attributeCollection=proxyParams;
 			
+			// Assume the server is up, HTML comes back, it is parsable, and it has a <title> tag
 			embedData.pageTitle = XMLSearch( HTMLParse( local.httpResult.fileContent, false ), "//*[translate(local-name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='title'][1]" )[1].xmlText;
 			job.addLog( 'Found: #embedData.pageTitle#' );
 			
 		} catch( any e ) {
-			// There's a lot of things that could go wrong here.  
+			// There's a lot of things that could go wrong here, but we're just going to ignore them.
+			job.addErrorLog( 'Error getting link preview: #e.message#' );
 		}
 		
 		
