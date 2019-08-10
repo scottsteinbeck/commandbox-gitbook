@@ -213,7 +213,7 @@ component accessors='true' {
 			job.addLog( 'Found: #embedData.pageTitle#' );
 			
 		} catch( any e ) {
-			RETHROW;
+			// There's a lot of things that could go wrong here.  
 		}
 		
 		
