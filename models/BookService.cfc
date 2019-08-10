@@ -182,6 +182,7 @@ component accessors='true' {
 
 		if( revisionData.versions.keyExists( version ) ) {
 			TOCData.append( [
+				'uID' : topPage.keyExists('uID') ? topPage.uID : '',
 				'title' : topPage.title,
 				'type' :'page',
 				'path' : topPage.path,
@@ -201,6 +202,7 @@ component accessors='true' {
 	private function filterPageTitles( required array pages ) {
 		return pages.map( (v) => {
 			return [
+				'uid' : v.keyExists('uID') ? v.uID : '',
 				'title' : v.title,
 				'type' : v.kind == 'document' ? 'page' : 'section',
 				'path' : v.path,

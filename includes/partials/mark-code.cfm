@@ -1,3 +1,1 @@
-<cfoutput>
-	<div class="mark-code">#innerContent#</div>
-</cfoutput>
+<cfoutput><span class="mark-code">#innerContent#</span></cfoutput>

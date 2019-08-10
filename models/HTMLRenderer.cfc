@@ -102,7 +102,7 @@ component accessors='true' {
 		var renderChildren = function(tree) {
 			tree.each( (child) => {
 				job.addLog( child.title );
-				pages.append( '<h1 class="#child.type#">#child.title#</h1>' );
+				pages.append( '<h1 id="#child.uid#" class="#child.type#">#child.title#</h1>' );
 				if( child.type == 'page' ) {
 					currentCount++;
 					pages.append( renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection ) );
@@ -157,8 +157,10 @@ component accessors='true' {
 	}
 
 	function renderNode( required struct node, struct AssetCollection, boolean raw = false ) {
+		var parentNode = node;
 		var innerContent = ( node.nodes ?: [] )
 			.map( (node) => {
+				node.data.parentData = parentNode.data; //needed for passing down meta data for formatting
 				return renderNode(
 					node,
 					AssetCollection,
@@ -183,21 +185,23 @@ component accessors='true' {
 	}
 
 	function renderTextRanges( node, raw = false ) {
-		return node.ranges
+		var textNode = node.ranges
 			.map( (r) => {
 				// Code lines are preformatted so don't escape them
 				if( raw ) {
-					var thisText = r.text;
+					var thisText =  r.text ;
 					if( thisText.len() > 85 ) thisText = wrap( thisText, 85 );
 				} else {
-					var thisText = encodeForHTML( r.text );
+					// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
+					var thisText = replace(encodeForHTML(r.text),"&zwnj;","","All"); 
 				}
 				r.marks.each( (m) => {
-					thisText = renderPartial( 'mark-#m.type#', m, thisText );
+					thisText = trim(renderPartial( 'mark-#m.type#', m, thisText ));
 				} );
 				return thisText;
 			} )
 			.toList( '' );
+		return textNode;
 	}
 
 
