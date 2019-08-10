@@ -3,9 +3,10 @@
  */
 component accessors='true' {
 
-	property name='job' inject='interactiveJob';
-	property name='progressableDownloader' inject='ProgressableDownloader';
-	property name='progressBar' inject='ProgressBar';
+	property name='job'						inject='interactiveJob';
+	property name='progressableDownloader'	inject='ProgressableDownloader';
+	property name='progressBar'				inject='ProgressBar';
+	property name='configService'			inject='configService';
 
 	function init() {
 		return this;
@@ -141,7 +142,7 @@ component accessors='true' {
 	}
 
 	/**
-	 *
+	 * Download external asset to local file
 	 */
 	function acquireExternalAsset( required string downloadURL, required string targetFilePath ) {
 		progressableDownloader.download(
@@ -154,7 +155,7 @@ component accessors='true' {
 	}
 	
 	/**
-	 *
+	 * Resize image to reasonable size
 	 */
 	function resizeImage( required string targetFilePath ) {
 		var assetImage = imageRead( targetFilePath );
@@ -166,6 +167,58 @@ component accessors='true' {
 				'mediumPerformance'
 			);
 		imageWrite( assetImage, targetFilePath, .8, true );
+	}
+	
+	/**
+	 * Resize image to reasonable size
+	 */
+	function resolveURLEmbedData( required string embedURL ) {
+		job.addLog( 'Resolving embed data for URL: #embedURL#' );
+		
+		var jURL = createObject( 'java', 'java.net.URL' ).init( embedURL );
+			
+		var embedData = {
+			embdedHost = jURL.getHost(),
+			pageTitle = jURL.getHost(),
+			embedURL = embedURL
+		};
+
+		try {
+			var proxyServer=ConfigService.getSetting( 'proxy.server', '' )
+			var proxyPort=ConfigService.getSetting( 'proxy.port', '' )
+			var proxyUser=ConfigService.getSetting( 'proxy.user', '' )
+			var proxyPassword=ConfigService.getSetting( 'proxy.password', '' )
+			var proxyParams={};
+			if( len( proxyServer ) ) {
+				proxyParams.proxyServer = proxyServer;
+	
+				if( len( proxyPort ) ) {
+					proxyParams.proxyPort = proxyPort;
+				}
+				if( len( proxyUser ) ) {
+					proxyParams.proxyUser = proxyUser;
+				}
+				if( len( proxyPassword ) ) {
+					proxyParams.proxyPassword = proxyPassword;
+				}
+			}
+			
+			http url=embedURL 
+				throwOnError=false 
+				result="local.httpResult" 
+				timeout=20
+				attributeCollection=proxyParams;
+			
+			embedData.pageTitle = XMLSearch( HTMLParse( local.httpResult.fileContent, false ), "//*[translate(local-name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='title'][1]" )[1].xmlText;
+			job.addLog( 'Found: #embedData.pageTitle#' );
+			
+		} catch( any e ) {
+			RETHROW;
+		}
+		
+		
+		return embedData;
+			
 	}
 
 	/**

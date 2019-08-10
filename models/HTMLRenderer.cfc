@@ -9,6 +9,8 @@ component accessors='true' {
 	property name='progressBarGeneric' inject='progressBarGeneric';
 	property name='FilesystemUtil' inject='Filesystem';
 
+	processingdirective pageEncoding='UTF-8';
+
 	function init() {
 		return this;
 	}
@@ -187,13 +189,15 @@ component accessors='true' {
 	function renderTextRanges( node, raw = false ) {
 		var textNode = node.ranges
 			.map( (r) => {
+				// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
+				var thisText =  replace( r.text, chr(8203), '', 'all' );
 				// Code lines are preformatted so don't escape them
 				if( raw ) {
-					var thisText =  r.text ;
-					if( thisText.len() > 85 ) thisText = wrap( thisText, 85 );
+					if( thisText.len() > 85 ) {
+						thisText = wrap( thisText, 85 );
+					}
 				} else {
-					// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
-					var thisText = replace(encodeForHTML(r.text),"&zwnj;","","All"); 
+					thisText = encodeForHTML( thisText ); 
 				}
 				r.marks.each( (m) => {
 					thisText = trim(renderPartial( 'mark-#m.type#', m, thisText ));
