@@ -25,7 +25,7 @@ component accessors='true' {
 	 *
 	 */
 	struct function getHTTPCodes() {
-		return deserializeJSON( fileRead( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ) ) );
+		return deserializeJSON( fileRead( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ), 'UTF-8' ) );
 	}
 
 	/**
@@ -34,7 +34,7 @@ component accessors='true' {
 	 */
 	string function getBookTitle( required string bookDirectory ) {
 		if( fileExists( bookDirectory & '/space.json' )){
-			var spacesObj = deserializeJSON( fileRead( bookDirectory & '/space.json' ) );
+			var spacesObj = deserializeJSON( fileRead( bookDirectory & '/space.json', 'UTF-8' ) );
 			return spacesObj.name;
 		}
 		return ''
@@ -61,7 +61,7 @@ component accessors='true' {
 			throw( message = 'This folder is not a Gitbook Export', detail = bookDirectory );
 		}
 
-		return deserializeJSON( fileRead( bookDirectory & '/revision.json' ) );
+		return deserializeJSON( fileRead( bookDirectory & '/revision.json', 'UTF-8' ) );
 	}
 
 	/**
@@ -127,31 +127,45 @@ component accessors='true' {
 				if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
 					fileCopy( sourcePath, targetFilePath );
 				} else {
-					var result = progressableDownloader.download(
-						assetData.downloadURL,
-						targetFilePath,
-						function(status) {
-							progressBar.update( argumentCollection = status );
-						}
-					);
+					acquireExternalAsset( assetData.downloadURL, targetFilePath );
 				}
 
 				// reduce oversized images
 				if( isImageFile( targetFilePath ) ) {
-					assetImage = imageRead( targetFilePath );
-					if( assetImage.getWidth() > 700 )
-						imageScaleTofit(
-							assetImage,
-							700,
-							'',
-							'mediumPerformance'
-						);
-					imageWrite( assetImage, targetFilePath, .8, true );
+					resizeImage( targetFilePath );
 				}
 			}
 		} );
 
 		job.complete();
+	}
+
+	/**
+	 *
+	 */
+	function acquireExternalAsset( required string downloadURL, required string targetFilePath ) {
+		progressableDownloader.download(
+			downloadURL,
+			targetFilePath,
+			function(status) {
+				progressBar.update( argumentCollection = status );
+			}
+		);
+	}
+	
+	/**
+	 *
+	 */
+	function resizeImage( required string targetFilePath ) {
+		var assetImage = imageRead( targetFilePath );
+		if( assetImage.getWidth() > 700 )
+			imageScaleTofit(
+				assetImage,
+				700,
+				'',
+				'mediumPerformance'
+			);
+		imageWrite( assetImage, targetFilePath, .8, true );
 	}
 
 	/**

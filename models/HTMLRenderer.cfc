@@ -150,7 +150,7 @@ component accessors='true' {
 	}
 
 	function renderPage( string JSONPath, struct AssetCollection ) {
-		var pageRaw = fileRead( JSONPath );
+		var pageRaw = fileRead( JSONPath, 'UTF-8' );
 		if(left(trim(pageRaw),1) != '{') return '';
 		var pageJSON = deserializeJSON( pageRaw );
 		return renderNode( pageJSON.document, AssetCollection );
