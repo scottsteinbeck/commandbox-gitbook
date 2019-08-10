@@ -182,7 +182,9 @@ component accessors='true' {
 		var embedData = {
 			embdedHost = jURL.getHost(),
 			pageTitle = jURL.getHost(),
-			embedURL = embedURL
+			embedURL = embedURL,
+			pageDescription = '',
+			pageIcon = ''
 		};
 
 		try {
@@ -213,8 +215,21 @@ component accessors='true' {
 				timeout=5
 				attributeCollection=proxyParams;
 			
-			// Assume the server is up, HTML comes back, it is parsable, and it has a <title> tag
-			embedData.pageTitle = XMLSearch( HTMLParse( local.httpResult.fileContent, false ), "//*[translate(local-name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='title'][1]" )[1].xmlText;
+			// Assume the server is up, HTML comes back, it is parsable.
+			var PageXML = HTMLParse( local.httpResult.fileContent, false );
+			
+			// Look for title
+			var titleSearch = XMLSearch(PageXML , "//*[translate(local-name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='title'][1]" );
+			if( titleSearch.len() ) embedData.pageTitle = titleSearch[1].xmlText;
+			
+			// Look for meta description
+			var descriptionSearch = XMLSearch(PageXML,"//*['head']['meta'][@name='description'][1]");
+			if( descriptionSearch.len() ) embedData.pageDescription = descriptionSearch[1].XmlAttributes.content;
+			
+			// Look for favicon
+			var faviconSearch = XMLSearch(PageXML,"//*['head']['link'][@rel='icon'][1]");
+			if( faviconSearch.len() ) embedData.pageIcon = faviconSearch[1].XmlAttributes.href;
+			
 			job.addLog( 'Found: #embedData.pageTitle#' );
 			
 		} catch( any e ) {
