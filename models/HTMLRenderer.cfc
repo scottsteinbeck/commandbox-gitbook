@@ -187,12 +187,12 @@ component accessors='true' {
 	}
 
 	function renderTextRanges( node, raw = false ) {
-		var textNode = node.ranges
-			.map( (r) => {
-				// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
-				var thisText =  replace( r.text, chr(8203), '', 'all' );
-				// Code lines are preformatted so don't escape them
+		return node.ranges
+		.map( (r) => {
+			// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
+			var thisText =  replace( r.text, chr(8203), '', 'all' );
 				if( raw ) {
+					// Code lines are preformatted so don't escape them
 					if( thisText.len() > 85 ) {
 						thisText = wrap( thisText, 85 );
 					}
@@ -205,7 +205,6 @@ component accessors='true' {
 				return thisText;
 			} )
 			.toList( '' );
-		return textNode;
 	}
 
 

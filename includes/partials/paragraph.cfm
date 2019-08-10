@@ -1,3 +1,5 @@
-<cfoutput>
-<cfif len(DecodeforHTML(innerContent)) gt 0><p>#innerContent#</p></cfif>
-</cfoutput>
+<cfif innerContent eq '---'>
+    <div class="inner-page-break"></div>
+<cfelseif len(DecodeforHTML(innerContent)) gt 0>
+    <p><cfoutput>#innerContent#</cfoutput></p>
+</cfif>

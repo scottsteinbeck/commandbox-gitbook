@@ -28,6 +28,8 @@ h1 {
 
 h2 {
     font-size: 20px;
+    margin-top: 32px;
+    margin-bottom: 24px;
 }
 
 h3 {
@@ -36,6 +38,10 @@ h3 {
 
 .document>h1 {
     page-break-before: avoid
+}
+
+.inner-page-break {
+    page-break-after: always;
 }
 
 h1,
@@ -60,12 +66,16 @@ h1.page {
 
 blockquote {
     margin: 24px 0px;
-    padding: 0px 0px 0px 12px;
+    padding: 5px 11px;
     border-left: 4px solid #e6ecf1;
     border-color: #e6ecf1;
     page-break-inside: avoid;
     page-break-after: avoid;
     color: #80888e;
+}
+
+blockquote p {
+    margin: 0;
 }
 
 img {
@@ -293,6 +303,14 @@ span.lineno {
     vertical-align: text-bottom;
 }
 
+.highligh .filename {
+    display: block;
+    background: #ececec;
+    margin: -9px -9px 0;
+    padding: 2px 11px;
+    color: #969696;
+}
+
 .highligh .err {
     border: none;
 }
@@ -383,6 +401,30 @@ span.lineno {
     padding: 10px;
 }
 
+.embed {
+    border: 1px solid #d6e1ea;
+    margin: 10px 0 31px;
+    padding: 19px;
+}
+
+.embed .embed-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.embed .embed-desc {
+    margin-bottom: 11px;
+    color: #9DAAB6;
+}
+
+.embed .link a {
+    color: #9DAAB6;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+
 .missing-element-type {
     background: red;
     color: white;
@@ -455,6 +497,7 @@ span.lineno {
     color: #dd4a68;
 }
 
+.highlight .s,
 .highlight .s1,
 .highlight .s2 {
     color: #690;
@@ -491,6 +534,10 @@ span.lineno {
 }
 
 .highlight .n {
+    color: #dd4a68;
+}
+
+.highlight .nf {
     color: #dd4a68;
 }
 
