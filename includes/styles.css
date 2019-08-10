@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    color: black;
+    font-family: Content-font,
+        Roboto,
+        sans-serif;
+    color: #3b454e;
 }
 
 .document {
@@ -19,9 +23,16 @@ h5 {
 
 h1 {
     border-top: 2px solid #f1f1f1;
-    padding: 20px 0 0;
+    padding: 28px 0 9px;
 }
 
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 16px;
+}
 
 .document>h1 {
     page-break-before: avoid
@@ -40,10 +51,11 @@ h1.section {
 }
 
 h1.page {
-    text-align: center;
-    font-size: 2.2em;
-    font-weight: bold;
-    border: none;
+    text-align: left;
+    font-size: 2em;
+    border-bottom: 2px solid #E6ECF1;
+    padding: 40px 0px;
+    font-weight: normal;
 }
 
 blockquote {
@@ -53,6 +65,7 @@ blockquote {
     border-color: #e6ecf1;
     page-break-inside: avoid;
     page-break-after: avoid;
+    color: #80888e;
 }
 
 img {
@@ -89,16 +102,18 @@ li ul li.list-item.list-item-check {
 
 p {
     margin: 0;
-    margin-bottom: 0;
+    margin-bottom: 24px;
     display: inline-block;
-    line-height: 1.5em;
+    line-height: 1.625em;
 }
 
 table {
     width: 100%;
-    background: #bfcedc;
+    border-top: 1px solid #bfcedc;
+    border-left: 1px solid #bfcedc;
     page-break-inside: auto;
-    margin: -2px 0;
+    margin: -2px 0 32px;
+
 }
 
 table.param-table,
@@ -106,11 +121,15 @@ table.no-border {
     background: transparent;
     page-break-inside: auto;
     margin: -2px 0;
+    border: none;
+}
+
+table.no-border td {
+    border: none
 }
 
 tr {
     padding: 10px;
-    background: #ffffff;
     border-bottom: 1px solid #e6ecf1;
     page-break-after: auto;
     page-break-inside: avoid;
@@ -126,21 +145,23 @@ table tr:first-child {
 table tr td {
     padding: 8px;
     border-top: none;
-    border-right: none;
-    border-bottom: none;
+    border-right: 1px solid #bfcedc;
+    border-bottom: 1px solid #bfcedc;
 }
 
 table tr td p,
 li p {
-    font-family: Arial, sans-serif;
-    font-weight: 400;
     padding: 0;
     margin: 0;
+    vertical-align: text-top;
+    color: #4c4c4c;
 }
 
 pre {
+    font-family: 'Source Code Pro',
+        monospace;
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
     background: #f5f7f9;
     font-weight: bold;
 }
@@ -161,6 +182,7 @@ li {
 
 a {
     color: #3884ff;
+    text-decoration: none;
 }
 
 a.file-name {
@@ -174,16 +196,16 @@ span.lineno {
 }
 
 .mark-code {
-    background: #f1f1f1;
-    padding: 0 4px;
-    border: 1px solid #f1f1f1;
-    font-weight: bold;
-    font-size: 14px;
     color: #333;
-    font-family: monospace;
+    font-size: 14px;
     border-radius: 5px;
     display: inline-block;
+    background: #f5f7f9;
+    padding: 2px 5px;
+    font-family: 'Source Code Pro',
+        monospace;
 }
+
 
 
 
@@ -194,6 +216,7 @@ span.lineno {
 .code {
     page-break-inside: avoid;
     page-break-after: avoid;
+    margin-bottom: 24px;
 }
 
 .code-tab,
@@ -203,7 +226,7 @@ span.lineno {
     font-family: Arial, sans-serif;
     line-height: 1.7;
     background-color: #f5f7f9;
-    border: 1px solid #dedede;
+    /* border: 1px solid #dedede; */
     margin: 4px 0;
     padding: 10px 8px;
     page-break-before: avoid;
@@ -216,10 +239,9 @@ span.lineno {
 }
 
 .caption {
-    padding: 5px;
-    font-size: 18px;
-    color: #989898;
-    font-style: italic;
+    padding: 10px;
+    font-size: 16px;
+    color: #b1b1b1;
 }
 
 .math {
@@ -233,8 +255,9 @@ span.lineno {
     position: relative;
     background-color: #f5f7f9;
     margin: 32px 0px;
-    padding: 14px 24px;
-    border-left: 6px solid #26cb7c;
+    padding: 14px;
+    border-left: 4px solid #26cb7c;
+    border-radius: 4px 0 0 4px;
 }
 
 .hint.hint-success {
@@ -272,6 +295,14 @@ span.lineno {
 
 .highligh .err {
     border: none;
+}
+
+.highlight .o {
+    color: #9a9a9a;
+}
+
+.highlight .nv {
+    color: #ea972e;
 }
 
 .api-method-type-get {
@@ -418,4 +449,56 @@ span.lineno {
 
 .highlight .err {
     border: none;
+}
+
+.highlight .nx {
+    color: #dd4a68;
+}
+
+.highlight .s1,
+.highlight .s2 {
+    color: #690;
+}
+
+.highlight .nt {
+    color: #b1023a;
+    /* font-weight: bold; */
+}
+
+.highlight .k {
+    color: #07a;
+    font-weight: bold;
+}
+
+.highlight .kd {
+    color: #07a;
+    font-weight: normal;
+}
+
+.highlight .kr {
+    color: #07a;
+    font-weight: bold;
+}
+
+.highlight .nc {
+    color: #dd4a68;
+    font-weight: normal;
+}
+
+.highlight .kc {
+    color: #07a;
+    font-weight: bold;
+}
+
+.highlight .n {
+    color: #dd4a68;
+}
+
+.highlight .c1 {
+    color: #a0a0a0;
+    font-style: normal;
+}
+
+.highlight .mi {
+    color: #07a;
 }
