@@ -23,45 +23,52 @@ component accessors='true' {
 	 */
 	function renderBookPDF( required string bookDirectory, required string version ) {
 		var bookTitle = bookService.getBookTitle( bookDirectory );
-		var bodyTop = renderPartial( 'body-wrapper-top', { 'data' : {
-			styles = [
-				// TODO: make this configurable
-				fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) ),
-				// TODO: add user styles by convention such that they override built in styles
-				fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )
-			]
-		} } );
-		
+		var bodyTop = renderPartial(
+			'body-wrapper-top',
+			{
+				'data' : {
+					styles : [
+						// TODO: make this configurable
+						fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) ),
+						// TODO: add user styles by convention such that they override built in styles
+						fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )
+					]
+				}
+			}
+		);
+
 		var bodyBottom = renderPartial( 'body-wrapper-bottom', { 'data' : {} } );
-		
+
 		var pages = renderBook( bookDirectory, version );
-		
+
 		fileWrite( filesystemUtil.resolvePath( 'test.html' ), bodyTop & pages.toList( ' ' ) & bodyBottom );
 
 		job.start( 'Building PDF' );
-			job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
-		
-			document format='pdf' filename=filesystemUtil.resolvePath( 'test.pdf' ) overwrite=true bookmark=true localurl=true {
-				documentitem type="header" {
-					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title: bookTitle } } ) );
-				}
-				// Putting this inside of a section breaks the page numbering due to Lucee bug
-				documentitem type="footer" evalAtPrint=false {
-					echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument } } ) );
-				}
-				echo( bodyTop );
-				for( var page in pages ) {
+		job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
+
+		document format='pdf'
+     			filename=filesystemUtil.resolvePath( 'test.pdf' )
+     			overwrite=true
+     			bookmark=true
+     			localurl=true {
+			documentitem type='header' {
+				echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle } } ) );
+			}
+			// Putting this inside of a section breaks the page numbering due to Lucee bug
+			documentitem type='footer' evalAtPrint=false {
+				echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument, title : bookTitle  } } ) );
+			}
+			echo( bodyTop );
+			for( var page in pages ) {
 				// sections break page numbering
 				//	documentSection name='my page' {
-						echo( page );
-					}
-				//}
-				echo( bodyBottom );
+				echo( page );
 			}
-			
-		job.complete();
+			// }
+			echo( bodyBottom );
+		}
 
-		
+		job.complete();
 	}
 
 	/**
@@ -85,8 +92,12 @@ component accessors='true' {
 		if( version == 'current' ) {
 			version = bookService.getCurrentVersion( bookDirectory );
 		}
+		var coverVersion = bookService.getBookVersionTitle( bookDirectory, version );
 
-		pages.append( renderPartial( 'cover-page', {data: { title: bookTitle, version: version, logo: bookLogo}}) );
+
+		pages.append(
+			renderPartial( 'cover-page', { data : { title : bookTitle, version : coverVersion, logo : bookLogo } } )
+		);
 		pages.append( renderTableOfContents( TOCData ) );
 
 		job.start( 'Render Pages' );
@@ -112,7 +123,9 @@ component accessors='true' {
 				pages.append( '<h1 id="#child.uid#" class="#child.type#">#child.title#</h1>' );
 				if( child.type == 'page' ) {
 					currentCount++;
-					pages.append( renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection ) );
+					pages.append(
+						renderPage( bookDirectory & '/versions/#version#/#child.path#.json', AssetCollection )
+					);
 					progressBarGeneric.update(
 						percent = ( currentCount / totalPages ) * 100,
 						currentCount = currentCount,
@@ -132,7 +145,7 @@ component accessors='true' {
 		job.complete();
 
 		job.complete();
-		
+
 		return pages
 	}
 
@@ -156,10 +169,8 @@ component accessors='true' {
 	}
 
 	function renderPage( string JSONPath, struct AssetCollection ) {
-		var pageRaw = fileRead( JSONPath, 'UTF-8' );
-		if(left(trim(pageRaw),1) != '{') return '';
-		var pageJSON = deserializeJSON( pageRaw );
-		return renderNode( pageJSON.document, AssetCollection );
+		var pageJSON = bookService.retrieveJSON( JSONPath );
+		return isStruct( pageJSON ) ? renderNode( pageJSON.document, AssetCollection ) : '';
 	}
 
 	function renderNode( required struct node, struct AssetCollection, boolean raw = false ) {
@@ -190,18 +201,18 @@ component accessors='true' {
 
 	function renderTextRanges( node, raw = false ) {
 		return node.ranges
-		.map( (r) => {
-			// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
-			var thisText =  replace( r.text, chr(8203), '', 'all' );
+			.map( (r) => {
+				// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
+				var thisText = replace( r.text, chr( 8203 ), '', 'all' );
 				if( raw ) {
 					// Code lines are preformatted so don't escape them
-					
+
 					thisText = thisText
 				} else {
-					thisText = encodeForHTML( thisText ); 
+					thisText = encodeForHTML( thisText );
 				}
 				r.marks.each( (m) => {
-					thisText = trim(renderPartial( 'mark-#m.type#', m, thisText ));
+					thisText = trim( renderPartial( 'mark-#m.type#', m, thisText ) );
 				} );
 				return thisText;
 			} )
@@ -213,7 +224,7 @@ component accessors='true' {
 	function renderPartial(
 		required string template,
 		struct node,
-		string innerContent='',
+		string innerContent = '',
 		struct AssetCollection = {}
 	) {
 		if( node.data.keyExists( 'assetID' ) ) node.data.assetMeta = AssetCollection[ node.data.assetID ];
