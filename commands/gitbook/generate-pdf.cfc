@@ -6,14 +6,14 @@ component {
 	property name='HTMLRenderer' inject='HTMLRenderer@commandbox-gitbook';
 	property name='bookService' inject='BookService@commandbox-gitbook';
 
-/*pageheight
-pagewidth 
+	/*pageheight
+pagewidth
 pagetype
-orientation 
-margintop 
+orientation
+margintop
 marginbottom
-marginleft 
-marginright 
+marginleft
+marginright
 backgroundvisible???
 bookmark */
 
@@ -42,7 +42,7 @@ bookmark */
 
 		HTMLRenderer.renderBookPDF( bookDirectory, version );
 
-		
+
 		job.complete();
 
 		print

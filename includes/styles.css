@@ -19,18 +19,18 @@ h4,
 h5 {
     margin: 20px 0;
     font-weight: bold;
-    page-break-after:avoid;
+    page-break-after: avoid;
 }
 
 h1 {
     /* border-top: 2px solid #f1f1f1; */
-    padding: 28px 0 9px;
+    padding: 20px 0 9px;
 }
 
 h2 {
     font-size: 20px;
     margin-top: 32px;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
 }
 
 h3 {
@@ -70,8 +70,6 @@ blockquote {
     padding: 5px 11px;
     border-left: 4px solid #e6ecf1;
     border-color: #e6ecf1;
-    page-break-inside: avoid;
-    page-break-after: avoid;
     color: #80888e;
 }
 
@@ -113,7 +111,7 @@ li ul li.list-item.list-item-check {
 
 p {
     margin: 0;
-    margin-bottom: 24px;
+    margin-bottom: 15px;
     display: inline-block;
     line-height: 1.625em;
 }
@@ -173,7 +171,7 @@ pre {
     background: #f5f7f9;
     font-weight: bold;
     white-space: pre-wrap;
-    word-wrap: break-word; 
+    word-wrap: break-word;
 }
 
 li {
@@ -226,7 +224,8 @@ span.lineno {
 .code {
     page-break-inside: avoid;
     page-break-after: avoid;
-    margin-bottom: 24px;
+    margin-bottom: 15px;
+    margin-top: -4px;
 }
 
 
@@ -247,6 +246,7 @@ span.lineno {
     text-align: center;
     padding: 14px 24px;
 }
+
 .code-tab {
     background-color: #f5f7f9;
     margin: 4px 0;
@@ -254,14 +254,13 @@ span.lineno {
     page-break-before: avoid;
     page-break-inside: avoid;
 }
+
 .hint {
     background-color: #f5f7f9;
-    margin: 0 0 32px;
+    margin: 0 0 12px;
     padding: 14px;
     border-left: 4px solid #26cb7c;
     border-radius: 4px 0 0 4px;
-    page-break-before: avoid;
-    page-break-inside: avoid;
 }
 
 .hint.hint-success {
@@ -298,7 +297,7 @@ span.lineno {
 }
 
 .highlight .filename {
-    width:100%;
+    width: 100%;
     background: transparent;
     margin: -9px -9px 0;
     padding: 2px 11px;
