@@ -40,6 +40,17 @@ component accessors='true' {
 		}
 		return ''
 	}
+	/**
+	 * Get book Title from space.json file
+	 * TODO: download to assets and reference logo from local 
+	 */
+	string function getBookLogo( required string bookDirectory ) {
+		if( fileExists( bookDirectory & '/space.json' )){
+			var spacesObj = deserializeJSON( fileRead( bookDirectory & '/space.json', 'UTF-8' ) );
+			return spacesObj.logoURL;
+		}
+		return ''
+	}
 
 	/**
 	 * Lookup http code and return description if available
@@ -220,15 +231,15 @@ component accessors='true' {
 			
 			// Look for title
 			var titleSearch = XMLSearch(PageXML , "//*[translate(local-name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='title'][1]" );
-			if( titleSearch.len() ) embedData.pageTitle = titleSearch[1].xmlText;
+			if( titleSearch.len() && titleSearch[1].keyExists('xmlText')) embedData.pageTitle = titleSearch[1].xmlText;
 			
 			// Look for meta description
 			var descriptionSearch = XMLSearch(PageXML,"//*['head']['meta'][@name='description'][1]");
-			if( descriptionSearch.len() ) embedData.pageDescription = descriptionSearch[1].XmlAttributes.content;
+			if( descriptionSearch.len() && descriptionSearch[1].XmlAttributes.keyExists('content') ) embedData.pageDescription = descriptionSearch[1].XmlAttributes.content;
 			
 			// Look for favicon
 			var faviconSearch = XMLSearch(PageXML,"//*['head']['link'][@rel='icon'][1]");
-			if( faviconSearch.len() ) embedData.pageIcon = faviconSearch[1].XmlAttributes.href;
+			if( faviconSearch.len() && descriptionSearch[1].XmlAttributes.keyExists('href') ) embedData.pageIcon = faviconSearch[1].XmlAttributes.href;
 			
 			job.addLog( 'Found: #embedData.pageTitle#' );
 			

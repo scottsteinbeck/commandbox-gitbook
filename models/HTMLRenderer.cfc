@@ -75,6 +75,8 @@ component accessors='true' {
 		variables.bookDirectory = arguments.bookDirectory;
 		job.start( 'Render Book as HTML' );
 
+		var bookTitle = bookService.getBookTitle( bookDirectory );
+		var bookLogo = bookService.getBookLogo( bookDirectory );
 		var TOCData = bookService.getTOC( bookDirectory, version );
 		var AssetCollection = bookService.getAssets( bookDirectory );
 		bookService.resolveAssetsToDisk( bookDirectory, bookDirectory & '/resolvedAssets' )
@@ -83,6 +85,9 @@ component accessors='true' {
 		if( version == 'current' ) {
 			version = bookService.getCurrentVersion( bookDirectory );
 		}
+
+		pages.append( renderPartial( 'cover-page', {data: { title: bookTitle, version: version, logo: bookLogo}}) );
+		pages.append( renderTableOfContents( TOCData ) );
 
 		job.start( 'Render Pages' );
 
@@ -119,7 +124,6 @@ component accessors='true' {
 		}
 		;
 
-		pages.append( renderTableOfContents( TOCData ) );
 
 		renderChildren( TOCData );
 
@@ -159,10 +163,8 @@ component accessors='true' {
 	}
 
 	function renderNode( required struct node, struct AssetCollection, boolean raw = false ) {
-		var parentNode = node;
 		var innerContent = ( node.nodes ?: [] )
 			.map( (node) => {
-				node.data.parentData = parentNode.data; //needed for passing down meta data for formatting
 				return renderNode(
 					node,
 					AssetCollection,
@@ -193,9 +195,8 @@ component accessors='true' {
 			var thisText =  replace( r.text, chr(8203), '', 'all' );
 				if( raw ) {
 					// Code lines are preformatted so don't escape them
-					if( thisText.len() > 85 ) {
-						thisText = wrap( thisText, 85 );
-					}
+					
+					thisText = thisText
 				} else {
 					thisText = encodeForHTML( thisText ); 
 				}

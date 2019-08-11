@@ -1,3 +1,1 @@
-<cfoutput>
-	<td>#innerContent#</td>
-</cfoutput>
+<cfoutput><td>#innerContent#&nbsp;</td></cfoutput>
