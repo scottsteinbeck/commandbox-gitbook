@@ -3,7 +3,7 @@
 	<div class="footer" style="font-family: Arial, sans-serif;color: black;font-size: 12px;"> 
 		<table width="100%">
 			<tr>
-				<td></td>
+				<td>#node.data.title#</td>
 				<td align="right">#node.data.cfdocument.currentpagenumber#</td>
 			</tr>
 		</table>
