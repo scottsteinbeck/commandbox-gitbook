@@ -8,6 +8,10 @@
 			<div class="embed-desc">
 				#encodeForHTML( embedData.pageDescription )#
 			</div>
+			<cfif len( embedData.pageIcon ) >
+				<!--- TODO: Cache this locally as an asset --->
+				<img style="max-height:100%" src="#embedData.pageIcon#" />
+			</cfif>
 			<span class="link"><a href="#embedData.embedURL#" target="_blank">#embedData.embdedHost#</a></span>
 		</div>
 	<cfelse>

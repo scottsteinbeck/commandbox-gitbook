@@ -224,6 +224,7 @@ component accessors='true' {
 				throwOnError=true 
 				result="local.httpResult" 
 				timeout=5
+				resolveurl=true
 				attributeCollection=proxyParams;
 			
 			// Assume the server is up, HTML comes back, it is parsable.
@@ -234,12 +235,12 @@ component accessors='true' {
 			if( titleSearch.len() && titleSearch[1].keyExists('xmlText')) embedData.pageTitle = titleSearch[1].xmlText;
 			
 			// Look for meta description
-			var descriptionSearch = XMLSearch(PageXML,"//*['head']['meta'][@name='description'][1]");
+			var descriptionSearch = XMLSearch(PageXML,"//*[local-name()='head']/*[local-name()='meta'][@name='description'][1]");
 			if( descriptionSearch.len() && descriptionSearch[1].XmlAttributes.keyExists('content') ) embedData.pageDescription = descriptionSearch[1].XmlAttributes.content;
 			
 			// Look for favicon
-			var faviconSearch = XMLSearch(PageXML,"//*['head']['link'][@rel='icon'][1]");
-			if( faviconSearch.len() && descriptionSearch[1].XmlAttributes.keyExists('href') ) embedData.pageIcon = faviconSearch[1].XmlAttributes.href;
+			var faviconSearch = XMLSearch(PageXML,"//*[local-name()='head']/*[local-name()='link'][@rel='icon'][1]");
+			if( faviconSearch.len() && faviconSearch[1].XmlAttributes.keyExists('href') ) embedData.pageIcon = faviconSearch[1].XmlAttributes.href;
 			
 			job.addLog( 'Found: #embedData.pageTitle#' );
 			
