@@ -21,7 +21,7 @@ component accessors='true' {
 	 * @bookDirectory Absolute path to Gitbook
 	 * @version A valid version in the this Gitbook
 	 */
-	function renderBookPDF( required string bookDirectory, required string version ) {
+	function renderBookPDF( required string bookDirectory, required string version, renderOpts={} ) {
 		var bookTitle = bookService.getBookTitle( bookDirectory );
 		var bodyTop = renderPartial(
 			'body-wrapper-top',
@@ -50,7 +50,8 @@ component accessors='true' {
      			filename=filesystemUtil.resolvePath( 'test.pdf' )
      			overwrite=true
      			bookmark=true
-     			localurl=true {
+     			localurl=true
+     			attributeCollection=renderOpts {
 			documentitem type='header' {
 				echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle } } ) );
 			}
