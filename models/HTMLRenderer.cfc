@@ -58,21 +58,44 @@ component accessors='true' {
      			bookmark=true
      			localurl=true
      			attributeCollection=renderOpts {
-			documentitem type='header' {
-				echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
+     				
+			documentSection {
+					
+				documentitem type='header' evalAtPrint=true {
+					echo( '' );
+				}
+				documentitem type='footer' evalAtPrint=true {
+					echo( '' );
+				}
+		 				
+				echo( bodyTop );
+			
+				echo( pages[ 1 ] );
+				
+				echo( bodyBottom );
 			}
-			// Putting this inside of a section breaks the page numbering due to Lucee bug
-			documentitem type='footer' evalAtPrint=false {
-				echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
+			
+			documentSection {
+						
+				echo( bodyTop );
+				
+				documentitem type='header' evalAtPrint=true {
+					echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
+				}
+				// Putting this inside of a section breaks the page numbering due to Lucee bug
+				documentitem type='footer' evalAtPrint=true {
+					echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
+				}
+				
+				var counter = 0;
+				for( var page in pages ) {
+					counter++;
+					if( counter > 1 ) {
+						echo( page );
+					}
+				}
+				echo( bodyBottom );
 			}
-			echo( bodyTop );
-			for( var page in pages ) {
-				// sections break page numbering
-				//	documentSection name='my page' {
-				echo( page );
-			}
-			// }
-			echo( bodyBottom );
 		}
 
 		job.complete();
