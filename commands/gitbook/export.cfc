@@ -147,6 +147,7 @@ component {
 					PDFOpts[ p ] = refArguments[ p ];
 				}
 			} );
+
 			var book = getInstance( 'BookExport@commandbox-gitbook' )
 				.setSourcePath( actualSourcePath )
 				.setExportVersion( version )
@@ -177,7 +178,7 @@ component {
 		}	
 
 		job.complete();
-
+			
 		print
 			.line()
 			.greenLine( 'Complete!' )
