@@ -51,15 +51,15 @@ component accessors='true' {
 
 		job.start( 'Building PDF' );
 		job.addLog( 'Writing PDF to #filesystemUtil.resolvePath( 'test.pdf' )#' );
-
 		document format='pdf'
      			filename=filesystemUtil.resolvePath( 'test.pdf' )
      			overwrite=true
      			bookmark=true
-     			localurl=true
-     			attributeCollection=renderOpts {
+				localurl=true
+				attributeCollection=PDFOpts
+     			{
      				
-			documentSection {
+			documentSection attributeCollection=PDFOpts{
 					
 				documentitem type='header' evalAtPrint=true {
 					echo( '' );
@@ -75,7 +75,7 @@ component accessors='true' {
 				echo( bodyBottom );
 			}
 			
-			documentSection {
+			documentSection attributeCollection=PDFOpts{
 						
 				echo( bodyTop );
 				

@@ -114,6 +114,8 @@ component {
 					PDFOpts[ p ] = refArguments[ p ];
 				}
 			} );
+			if( PDFOpts.keyExists('pagewidth') && PDFOpts.keyExists('pageheight')) PDFOpts.pagetype = 'custom';
+
 			HTMLRenderer.renderBookPDF( actualSourcePath, version, renderOpts, PDFOpts );
 			
 		} finally {
@@ -123,7 +125,7 @@ component {
 		}	
 
 		job.complete();
-
+			
 		print
 			.line()
 			.greenLine( 'Complete!' )
