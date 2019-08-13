@@ -15,6 +15,8 @@ component accessors='true' {
 	function retrieveJSON( required string filePath ) {
 		var hashKey = hash( filePath );
 		if( VARIABLES.keyExists( hashKey ) ) return VARIABLES[ hashKey ];
+
+		
 		if( fileExists( filePath ) ) {
 			var fileContents = fileRead( filePath, 'UTF-8' );
 			if( left( trim( fileContents ), 1 ) == '{' ) {

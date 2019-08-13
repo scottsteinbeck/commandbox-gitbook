@@ -205,9 +205,10 @@ component accessors='true' {
 			.map( (r) => {
 				// Fix for weird "zero width html code &zwnj;" causing style issues in PDF
 				var thisText = replace( r.text, chr( 8203 ), '', 'all' );
+				thisText = replace( thisText, chr( 8204 ), '', 'all' );
+				
 				if( raw ) {
 					// Code lines are preformatted so don't escape them
-
 					thisText = thisText
 				} else {
 					thisText = encodeForHTML( thisText );

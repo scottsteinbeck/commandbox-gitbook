@@ -25,17 +25,17 @@ component accessors='true' singleton {
 		getInterpreter().set( 'fileName', fileName );
 		getInterpreter().set( 'linenos', code.listLen( chr( 13 ) & chr( 10 ) ) > 1 ? 'inline' : False );
 
-		var lexer = determimeLexer( syntax, code, fileName );
+		var lexerResult = determimeLexer( syntax, code, fileName );
 
 		getInterpreter().exec(
 			'from pygments import highlight#CR#'
-			 & 'from pygments.lexers import #lexer##CR#'
+			 & 'from pygments.lexers import #lexerResult.lexer##CR#'
 			 & 'from pygments.formatters import HtmlFormatter#CR#'
 			 & 'Result = None#CR#'
-			 & 'Result = highlight(code, #lexer#(), HtmlFormatter( linenos=linenos, filename=fileName ))'
+			 & 'Result = highlight(code, #lexerResult.lexer#(), HtmlFormatter( linenos=linenos, filename=fileName ))'
 		);
 
-		return getInterpreter().get( 'Result', ''.getClass() )
+		return '<!--#lexerResult.lexer#: #lexerResult.source# -->' & getInterpreter().get( 'Result', ''.getClass() )
 	}
 
 
@@ -67,7 +67,7 @@ component accessors='true' singleton {
 			// If we found something, return it.
 			var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 			if( !isNull( lexResult ) && len( lexResult ) ) {
-				return lexResult;
+				return {lexer: lexResult, source: 'gb syntax'};
 			}
 		}
 
@@ -93,7 +93,7 @@ component accessors='true' singleton {
 			// If we found something, return it.
 			var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 			if( !isNull( lexResult ) && len( lexResult ) ) {
-				return lexResult;
+				return {lexer: lexResult, source: 'filename'};
 			}
 		}
 
@@ -117,9 +117,9 @@ component accessors='true' singleton {
 		// If we found something, return it.
 		var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 		if( !isNull( lexResult ) && len( lexResult ) ) {
-			return lexResult;
+			return {lexer: lexResult, source: 'code guess'};
 		} else {
-			return 'TextLexer';
+			return {lexer: 'TextLexer', source: 'default'};
 		}
 	}
 

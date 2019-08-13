@@ -24,7 +24,7 @@ h5 {
 
 h1 {
     /* border-top: 2px solid #f1f1f1; */
-    padding: 20px 0 9px;
+    /* padding: 20px 0 9px; */
 }
 
 h2 {
@@ -96,7 +96,6 @@ ol {
     padding: 0 0 0 2em;
 }
 
-li {}
 
 li.list-item.list-item-check {
     padding-left: 3px;
@@ -142,12 +141,6 @@ tr {
     page-break-inside: avoid;
 }
 
-table tr:first-child {
-    color: #9daab6;
-    font-size: 16px;
-    font-weight: 500;
-    border-bottom: 2px solid #e6ecf1;
-}
 
 table tr td {
     padding: 8px;
@@ -174,9 +167,9 @@ pre {
     word-wrap: break-word;
 }
 
-li {
+/* li {
     margin: 5px;
-}
+} */
 
 .file {
     padding: 10px 20px;
@@ -201,6 +194,8 @@ a.file-name {
 
 span.lineno {
     color: #d3d3d3;
+    /* display: inline-block;
+    margin-left: -24px; */
 }
 
 .mark-code {
@@ -261,6 +256,13 @@ span.lineno {
     padding: 14px;
     border-left: 4px solid #26cb7c;
     border-radius: 4px 0 0 4px;
+    page-break-inside: avoid;
+}
+
+.hint table,
+.hint table tr,
+.hint table tr td {
+    page-break-inside: auto;
 }
 
 .hint.hint-success {
@@ -294,6 +296,10 @@ span.lineno {
     text-transform: uppercase;
     margin: 3px 6px;
     vertical-align: text-bottom;
+}
+
+.highlight {
+    /* margin-left: 24px; */
 }
 
 .highlight .filename {
@@ -396,9 +402,8 @@ span.lineno {
 
 .embed {
     border: 1px solid #d6e1ea;
-    margin: 10px 0 31px;
-    padding: 19px;
-    page-break-inside: avoid;
+    margin: 10px 0 10px;
+    padding: 8px;
 }
 
 .embed .embed-title {
