@@ -70,7 +70,7 @@ component accessors='true' {
 	 */
 	string function getBookLogo( required string bookDirectory ) {
 		var spacesObj = this.retrieveJSON( bookDirectory & '/space.json' );
-		return isStruct( spacesObj ) ? spacesObj.logoURL : '';
+		return ( isStruct( spacesObj ) && !isNull( spacesObj.logoURL ) ) ? spacesObj.logoURL : '';
 	}
 
 	/**
