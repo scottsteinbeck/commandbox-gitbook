@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Source+Code+Pro&display=swap');
 
 body {
-    font-family: Content-font,
+    font: 12px Content-font,
         Roboto,
         sans-serif;
     color: #3b454e;
@@ -23,18 +23,20 @@ h5 {
 }
 
 h1 {
+    font-size: 16px;
     /* border-top: 2px solid #f1f1f1; */
     /* padding: 20px 0 9px; */
 }
 
 h2 {
-    font-size: 20px;
     margin-top: 32px;
     margin-bottom: 10px;
 }
 
-h3 {
-    font-size: 16px;
+h2,
+h3,
+h4 {
+    font-size: 14px;
 }
 
 /* .document>h1 {
