@@ -4,7 +4,11 @@
 		<table width="100%">
 			<tr>
 				<td>#node.data.title#</td>
-				<td align="right">#node.data.cfdocument.currentpagenumber#</td>
+				<td align="right">
+					<cfif node.data.showPageNumbers >
+						#node.data.cfdocument.currentpagenumber#
+					</cfif>
+				</td>
 			</tr>
 		</table>
 	</div>

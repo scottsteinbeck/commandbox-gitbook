@@ -40,7 +40,12 @@ component {
 	 * @marginleft Specifies the left margin in inches (default) or centimeters.
 	 * @marginright Specifies the right margin in inches (default) or centimeters. 
 	 * @unit Specifies the default unit (inches or centimeters) for pageheight, pagewidth, and margin attributes.
-	 * @unit.options in,cm 
+	 * @unit.options in,cm
+	 * @coverPageImageFile An image that will completely replace the default cover page. Use image same dimensions/size as page.
+	 * @codeHighlighlightTheme Name of Pygments theme to use for code blocks. http://jwarby.github.io/jekyll-pygments-themes/
+	 * @showTOC Set to false to not render a Table Of Contents for the book
+	 * @showPageNumbers Set to false to not render page numbers in the page footer
+	 * @verbose Leave full console log for content generation for debugging
 	 */
 	function run(
 		string sourcePath,
@@ -55,7 +60,12 @@ component {
 		string marginbottom,
 		string marginleft,
 		string marginright,
-		string unit
+		string unit,
+		string coverPageImageFile='',
+		string codeHighlighlightTheme='default',
+		boolean showTOC=true,
+		boolean showPageNumbers=true,
+		boolean verbose=false
 	) {
 		// For testing, remove later
 		pagePoolClear()
@@ -71,6 +81,7 @@ component {
 	
 			// This is sort of a dumb job step, just created it to have a wrapper since the PDF bit isn't in a service yet
 			job.start( 'Processing' );
+			job.setDumpLog( verbose );
 					
 			if( fileExists( arguments.sourcePath ) && arguments.sourcePath.right( 4 ) == '.zip' ) {
 				cleanUpTemp = true;
@@ -85,15 +96,25 @@ component {
 				error( 'A revision.json file is not present in this folder.  Please check your path.' );
 			}
 	
+			if( len( coverPageImageFile ) ) {
+				coverPageImageFile = resolvepath( coverPageImageFile );
+			}
+			
+			var renderOpts = {
+				coverPageImageFile : coverPageImageFile,
+				codeHighlighlightTheme : codeHighlighlightTheme,
+				showTOC : showTOC,
+				showPageNumbers : showPageNumbers
+			};			
 	
-			var renderOpts = {};
+			var PDFOpts = {};
 			var refArguments = arguments;
 			'pageheight,pagewidth,pagetype,orientation,margintop,marginbottom,marginleft,marginright,unit'.listEach( ( p ) => {
 				if( !isNull( refArguments[ p ] ) ) {
-					renderOpts[ p ] = refArguments[ p ];
+					PDFOpts[ p ] = refArguments[ p ];
 				}
 			} );
-			HTMLRenderer.renderBookPDF( actualSourcePath, version, renderOpts );
+			HTMLRenderer.renderBookPDF( actualSourcePath, version, renderOpts, PDFOpts );
 			
 		} finally {
 			if( cleanUpTemp && directoryExists( actualSourcePath ) ) {

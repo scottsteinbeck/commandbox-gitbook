@@ -21,7 +21,13 @@ component accessors='true' {
 	 * @bookDirectory Absolute path to Gitbook
 	 * @version A valid version in the this Gitbook
 	 */
-	function renderBookPDF( required string bookDirectory, required string version, renderOpts={} ) {
+	function renderBookPDF( required string bookDirectory, required string version, struct renderOpts={}, struct PDFOpts={} ) {
+		
+		renderOpts.coverPageImageFile = renderOpts.coverPageImageFile ?: '';
+		renderOpts.codeHighlighlightTheme = renderOpts.codeHighlighlightTheme ?: 'default';
+		renderOpts.showTOC = renderOpts.showTOC ?: true;
+		renderOpts.showPageNumbers = renderOpts.showPageNumbers ?: true;
+		
 		var bookTitle = bookService.getBookTitle( bookDirectory );
 		var bodyTop = renderPartial(
 			'body-wrapper-top',
@@ -29,7 +35,7 @@ component accessors='true' {
 				'data' : {
 					styles : [
 						// TODO: make this configurable
-						fileRead( expandPath( '/commandbox-gitbook/includes/pygments/default.css' ) ),
+						fileRead( expandPath( '/commandbox-gitbook/includes/pygments/#renderOpts.codeHighlighlightTheme#.css' ) ),
 						// TODO: add user styles by convention such that they override built in styles
 						fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )
 					]
@@ -39,7 +45,7 @@ component accessors='true' {
 
 		var bodyBottom = renderPartial( 'body-wrapper-bottom', { 'data' : {} } );
 
-		var pages = renderBook( bookDirectory, version );
+		var pages = renderBook( bookDirectory, version, renderOpts );
 
 		fileWrite( filesystemUtil.resolvePath( 'test.html' ), bodyTop & pages.toList( ' ' ) & bodyBottom );
 
@@ -53,11 +59,11 @@ component accessors='true' {
      			localurl=true
      			attributeCollection=renderOpts {
 			documentitem type='header' {
-				echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle } } ) );
+				echo( renderPartial( 'header', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
 			}
 			// Putting this inside of a section breaks the page numbering due to Lucee bug
 			documentitem type='footer' evalAtPrint=false {
-				echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument, title : bookTitle  } } ) );
+				echo( renderPartial( 'footer', { 'data' : { cfdocument : cfdocument, title : bookTitle, showPageNumbers : renderOpts.showPageNumbers } } ) );
 			}
 			echo( bodyTop );
 			for( var page in pages ) {
@@ -78,7 +84,7 @@ component accessors='true' {
 	 * @bookDirectory Absolute path to Gitbook
 	 * @version A valid version in the this Gitbook
 	 */
-	function renderBook( required string bookDirectory, required string version ) {
+	function renderBook( required string bookDirectory, required string version, struct renderOpts ) {
 		// I hate this, but I don't feel like passing this down 37 methods just to make it avaialble to the partials
 		variables.bookDirectory = arguments.bookDirectory;
 		job.start( 'Render Book as HTML' );
@@ -95,11 +101,18 @@ component accessors='true' {
 		}
 		var coverVersion = bookService.getBookVersionTitle( bookDirectory, version );
 
-
-		pages.append(
-			renderPartial( 'cover-page', { data : { title : bookTitle, version : coverVersion, logo : bookLogo } } )
-		);
-		pages.append( renderTableOfContents( TOCData ) );
+		if( renderOpts.coverPageImageFile.len() ) {
+			pages.append(
+				renderPartial( 'cover-page-image', { data : { coverPageImageFile : renderOpts.coverPageImageFile } } )
+			);
+		} else {
+			pages.append(
+				renderPartial( 'cover-page', { data : { title : bookTitle, version : coverVersion, logo : bookLogo } } )
+			);	
+		}
+		if( renderOpts.showTOC ) {
+			pages.append( renderTableOfContents( TOCData ) );
+		}
 
 		job.start( 'Render Pages' );
 
