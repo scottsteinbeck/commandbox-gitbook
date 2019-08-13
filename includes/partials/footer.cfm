@@ -3,9 +3,13 @@
 	<div class="footer" style="font-family: Arial, sans-serif;color: black;font-size: 12px;"> 
 		<table width="100%">
 			<tr>
-				<td>#node.data.title#</td>
+				<td>
+					<cfif book.getRenderOpts().showTitleInPage >
+						#book.getTitle()#
+					</cfif>
+				</td>
 				<td align="right">
-					<cfif node.data.showPageNumbers >
+					<cfif book.getRenderOpts().showPageNumbers >
 						#node.data.cfdocument.currentpagenumber#
 					</cfif>
 				</td>

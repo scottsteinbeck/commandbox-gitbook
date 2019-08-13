@@ -15,17 +15,10 @@ component accessors='true' {
 	function retrieveJSON( required string filePath ) {
 		var hashKey = hash( filePath );
 		if( VARIABLES.keyExists( hashKey ) ) return VARIABLES[ hashKey ];
-
 		
-		if( fileExists( filePath ) ) {
-			var fileContents = fileRead( filePath, 'UTF-8' );
-			if( left( trim( fileContents ), 1 ) == '{' ) {
-				VARIABLES[ hashKey ] = deserializeJSON( fileContents );
-				return VARIABLES[ hashKey ];
-			}
-			;
-		}
-		return false;
+		var fileContents = fileRead( filePath, 'UTF-8' );
+		VARIABLES[ hashKey ] = deserializeJSON( fileContents );
+		return VARIABLES[ hashKey ];
 	}
 
 	/**
@@ -34,7 +27,7 @@ component accessors='true' {
 	 * @bookDirectory Absolute path to Gitbook
 	 */
 	function isBook( required string bookDirectory ) {
-		return isStruct( this.retrieveJSON( bookDirectory & '/revision.json' ) );
+		return fileExists( bookDirectory & '/revision.json' );
 	}
 
 	/**
@@ -45,35 +38,6 @@ component accessors='true' {
 		return this.retrieveJSON( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ) );
 	}
 
-	/**
-	 * Get book Title from space.json file
-	 *
-	 */
-	string function getBookTitle( required string bookDirectory ) {
-		var spacesObj = this.retrieveJSON( bookDirectory & '/space.json' );
-		return isStruct( spacesObj ) ? spacesObj.name : '';
-	}
-	
-
-	/**
-	 * Get book version from space.json file
-	 *
-	 */
-	string function getBookVersionTitle( required string bookDirectory, required string versionID ) {
-		var revisionsObj = this.retrieveJSON( bookDirectory & '/revision.json' );
-		//Do not display a version if only 1 version
-		if( !isStruct( revisionsObj ) || structCount( revisionsObj.versions ) < 2 ) return '';
-		return revisionsObj.versions[versionID].title;
-	}
-
-	/**
-	 * Get book Title from space.json file
-	 * TODO: download to assets and reference logo from local
-	 */
-	string function getBookLogo( required string bookDirectory ) {
-		var spacesObj = this.retrieveJSON( bookDirectory & '/space.json' );
-		return ( isStruct( spacesObj ) && !isNull( spacesObj.logoURL ) ) ? spacesObj.logoURL : '';
-	}
 
 	/**
 	 * Lookup http code and return description if available
@@ -86,36 +50,6 @@ component accessors='true' {
 		return '';
 	}
 
-	/**
-	 * Get raw revision data from revisions.json
-	 *
-	 * @bookDirectory Absolute path to Gitbook
-	 */
-	struct function getRevisionData( required string bookDirectory ) {
-		if( !isBook( bookDirectory ) ) {
-			throw( message = 'This folder is not a Gitbook Export', detail = bookDirectory );
-		}
-
-		return this.retrieveJSON( bookDirectory & '/revision.json' );
-	}
-
-	/**
-	 * Get array of versions in a book
-	 *
-	 * @bookDirectory Absolute path to Gitbook
-	 */
-	array function getVersions( required string bookDirectory ) {
-		return getRevisionData( bookDirectory ).versions.reduce( (acc, k, v) => acc.append( v.title ), [] );
-	}
-
-	/**
-	 * Get asset metadata from the revisions file
-	 *
-	 * @bookDirectory Absolute path to Gitbook
-	 */
-	struct function getAssets( required string bookDirectory ) {
-		return getRevisionData( bookDirectory ).assets;
-	}
 
 	/**
 	 * Generate unique file name from asset metadata
@@ -137,12 +71,12 @@ component accessors='true' {
 	 *
 	 * @bookDirectory Absolute path to Gitbook
 	 */
-	function resolveAssetsToDisk( required string bookDirectory, required string assetDirectory ) {
+	function resolveAssetsToDisk( required book ) {
 		job.start( 'Building Assets' );
 
-		var assetCollection = getAssets( bookDirectory );
+		var assetCollection = book.getAssets();
 
-		directoryCreate( assetDirectory, true, true )
+		directoryCreate( book.getAssetDirectory(), true, true )
 
 		// Find assets in the JSON that have the same name.  We'll need to re-download these!
 		var dupeAssets = assetCollection
@@ -156,8 +90,8 @@ component accessors='true' {
 		// Loop over each asset and transfer it from the assets folder, or download as neccessary
 		assetCollection.each( (assetID, assetData) => {
 			job.addLog( assetData.name );
-			var sourcePath = bookDirectory & '/assets/' & assetData.name;
-			var targetFilePath = assetDirectory & '/' & getAssetUniqueName( assetData );
+			var sourcePath = book.getSourcePath() & '/assets/' & assetData.name;
+			var targetFilePath = book.getAssetDirectory() & '/' & getAssetUniqueName( assetData );
 			if( !fileExists( targetFilePath ) ) {
 				if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
 					fileCopy( sourcePath, targetFilePath );
@@ -281,63 +215,6 @@ component accessors='true' {
 
 
 		return embedData;
-	}
-
-	/**
-	 * Get current Version of a book
-	 *
-	 * @bookDirectory Absolute path to Gitbook
-	 */
-	function getCurrentVersion( required string bookDirectory ) {
-		return getRevisionData( bookDirectory ).primaryVersionID;
-	}
-
-	/**
-	 * Get struct representing table contents for a version of the book
-	 *
-	 * @bookDirectory Absolute path to Gitbook
-	 * @version A valid version in the this Gitbook
-	 */
-	array function getTOC( required string bookDirectory, required string version ) {
-		job.start( 'Build Table Of Contents' );
-		var revisionData = getRevisionData( bookDirectory );
-		var TOCData = [];
-
-		if( version == 'current' ) {
-			version = revisionData.primaryVersionID;
-		}
-
-		var topPage = revisionData.versions[ version ].page;
-
-		if( revisionData.versions.keyExists( version ) ) {
-			TOCData.append( [
-				'uID' : topPage.keyExists( 'uID' ) ? topPage.uID : '',
-				'title' : topPage.title,
-				'type' :'page',
-				'path' : topPage.path,
-				'children' :[]
-			] );
-			TOCData.append( filterPageTitles( topPage.pages ), true );
-		}
-
-		job.complete();
-
-		return TOCData;
-	}
-
-	/**
-	 * Resursive function for filtering page data
-	 */
-	private function filterPageTitles( required array pages ) {
-		return pages.map( (v) => {
-			return [
-				'uid' : v.keyExists( 'uID' ) ? v.uID : '',
-				'title' : v.title,
-				'type' : v.kind == 'document' ? 'page' : 'section',
-				'path' : v.path,
-				'children' : filterPageTitles( v.pages )
-			];
-		} );
 	}
 
 }

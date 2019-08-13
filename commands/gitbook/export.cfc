@@ -12,7 +12,7 @@
  */
 component {
 
-	property name='HTMLRenderer'	inject='HTMLRenderer@commandbox-gitbook';
+	property name='ExportService'	inject='ExportService@commandbox-gitbook';
 	property name='bookService'		inject='BookService@commandbox-gitbook';
 	property name="tempDir" 		inject="tempDir@constants";
 
@@ -43,8 +43,10 @@ component {
 	 * @unit.options in,cm
 	 * @coverPageImageFile An image that will completely replace the default cover page. Use image same dimensions/size as page.
 	 * @codeHighlighlightTheme Name of Pygments theme to use for code blocks. http://jwarby.github.io/jekyll-pygments-themes/
+	 * @codeHighlighlightTheme.options autumn,borland,bw,colorful,default,emacs,friendly,fruity,manni,monokai,murphy,native,pastie,perldoc,tango,trac,vim,vs
 	 * @showTOC Set to false to not render a Table Of Contents for the book
-	 * @showPageNumbers Set to false to not render page numbers in the page footer
+	 * @showPageNumbers Set to false to not render page numbers in header/footer
+	 * @showTitleInPage Set to false to not render page title in header/footer
 	 * @verbose Leave full console log for content generation for debugging
 	 */
 	function run(
@@ -65,16 +67,46 @@ component {
 		string codeHighlighlightTheme='default',
 		boolean showTOC=true,
 		boolean showPageNumbers=true,
+		boolean showTitleInPage=true,
+		boolean PDF,
+		boolean HTML,
 		boolean verbose=false
 	) {
 		// For testing, remove later
 		pagePoolClear()
-		HTMLRenderer = getInstance( 'HTMLRenderer@commandbox-gitbook' );
+		ExportService = getInstance( 'ExportService@commandbox-gitbook' );
 		bookService = getInstance( 'BookService@commandbox-gitbook' );
 		// For testing, remove later
 
 		arguments.sourcePath = resolvePath( arguments.sourcePath ?: '' );
 		var actualSourcePath = arguments.sourcePath;
+		
+		arguments.targetDir = resolvePath( arguments.targetDir ?: '' );
+		if( !'/,\'.listFindNoCase( targetDir.right( 1 ) ) ) {
+			targetDir &= '/';
+		}
+		
+		arguments.targetFile = arguments.targetFile ?: '';
+		
+		// Clean any accidental file extensions off the file name
+		if( targetFile.len() && targetFile.listLen( '.' ) > 1 && 'pdf,html,mobi,epub'.listFindNoCase( targetFile.listLast( '.' ) ) ) {
+			targetFile = targetFile.listDeleteAt( targetFile.listLen( '.' ), '.' );
+		}
+		 	
+		var targetPathPartial = targetDir & targetFile;
+		
+		if( !isNull( arguments.pageheight ) && isNull( arguments.pagewidth ) ) {
+			error( 'You cannot set a pageheight but not a pagewidth. Please provide both, or use a pre-defined pageType.' );
+		}
+		
+		if( !isNull( arguments.pagewidth ) && isNull( arguments.pageheight ) ) {
+			error( 'You cannot set a pagewidth but not a pageheight. Please provide both, or use a pre-defined pageType.' );
+		}
+		
+		
+		if( !isNull( arguments.pageheight ) || !isNull( arguments.pagewidth ) ) {
+			arguments.pagetype='custom';
+		}
 		
 		var cleanUpTemp = false;
 		try {
@@ -104,7 +136,8 @@ component {
 				coverPageImageFile : coverPageImageFile,
 				codeHighlighlightTheme : codeHighlighlightTheme,
 				showTOC : showTOC,
-				showPageNumbers : showPageNumbers
+				showPageNumbers : showPageNumbers,
+				showTitleInPage : showTitleInPage
 			};			
 	
 			var PDFOpts = {};
@@ -114,7 +147,28 @@ component {
 					PDFOpts[ p ] = refArguments[ p ];
 				}
 			} );
-			HTMLRenderer.renderBookPDF( actualSourcePath, version, renderOpts, PDFOpts );
+			var book = getInstance( 'BookExport@commandbox-gitbook' )
+				.setSourcePath( actualSourcePath )
+				.setExportVersion( version )
+				.setTargetPathPartial( targetPathPartial )
+				.setRenderOpts( renderOpts )
+				.setPDFOpts( PDFOpts );
+				
+				
+			// If nothing was specified, do all formats
+			if( isNull( arguments.PDF ) && isNull( arguments.HTML ) ) {
+				book.setCreatePDF( true ).setCreateHTML( true );
+			// If at least one type was set to true, only do the true ones
+			} else if( arguments.PDF ?: false || arguments.HTML ?: false ) {
+				book.setCreatePDF( arguments.PDF ?: false ).setCreateHTML( arguments.HTML ?: false );
+			// If none were set to true, but at least one type was set to false, only do the not-false ones.
+			} else {
+				book.setCreatePDF( arguments.PDF ?: true ).setCreateHTML( arguments.HTML ?: true );				
+			}
+				
+			book.load();
+			
+			ExportService.exportAllTheThings( book );
 			
 		} finally {
 			if( cleanUpTemp && directoryExists( actualSourcePath ) ) {
@@ -127,8 +181,18 @@ component {
 		print
 			.line()
 			.greenLine( 'Complete!' )
-			.line()
-			.yellowLine( 'PDF written to #resolvePath( 'test.pdf' )#' );
+			.line();
+			
+		if( book.getCreatePDF() ) {
+			print.yellowLine( 'HTML written to #book.getHTMLExportFilePath()#' );
+		}	
+		if( book.getCreateHTML() ) {
+			print.yellowLine( 'PDF written to #book.getPDFExportFilePath()#' );
+		}
+			
+		
+			
+	
 	}
 
 	function versionsComplete() {

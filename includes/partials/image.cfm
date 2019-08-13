@@ -2,10 +2,10 @@
 	<div class="image"> 
 		<cfif node.data.keyExists('assetMeta')>
 			<cfset fileName = BookService.getAssetUniqueName(node.data.assetMeta)>
-			<img  align="center" style="max-width:100%" src="file:///#bookDirectory#/resolvedAssets/#fileName#" />
+			<img  align="center" style="max-width:100%" src="file:///#book.getSourcePath()#/resolvedAssets/#fileName#" />
 		<cfelseif node.data.keyExists( 'src' )>
 			<!--- Acquire external image, resize, and cache it for later use. --->
-			<cfset localpath = "#bookDirectory#/resolvedAssets/#node.key#-#listLast( node.data.src, '/\' )#">
+			<cfset localpath = "#book.getSourcePath()#/resolvedAssets/#node.key#-#listLast( node.data.src, '/\' ).listFirst( '?' )#">
 			<cfif not fileExists( localpath )>
 				<cfset job.addLog( 'Downloading #node.data.src#' )>
 				<cfset bookService.acquireExternalAsset( node.data.src, localpath )>
