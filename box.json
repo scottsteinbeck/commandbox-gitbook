@@ -1,15 +1,11 @@
 {
-    "author":"Scott Steinbeck",
-    "bugs":"",
-    "changelog":"",
-    "contributors":[],
+    "author":"Scott Steinbeck, Brad Wood",
+    "bugs":"https://github.com/scottsteinbeck/commandbox-gitbook/issues",
     "dependencies":{
         "pygments-2.4.2":"jar:https://search.maven.org/remotecontent?filepath=org/pygments/pygments/2.4.2/pygments-2.4.2.jar",
         "jython-standalone-2.7.1":"jar:https://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.7.1/jython-standalone-2.7.1.jar"
     },
-    "description":"",
-    "devDependencies":{},
-    "documentation":"",
+    "documentation":"https://github.com/scottsteinbeck/commandbox-gitbook/blob/master/README.md",
     "homepage":"www.aresdev.com",
     "ignore":[
         "**/.*",
@@ -29,35 +25,20 @@
         }
     ],
     "location":"",
-    "name":"GitBook PDF Generator",
+    "name":"GitBook Exporter",
     "private":false,
-    "projectURL":"",
+    "projectURL":"https://github.com/scottsteinbeck/commandbox-gitbook/",
     "repository":{
-        "type":"",
-        "URL":""
+        "type":"Git",
+        "URL":"https://github.com/scottsteinbeck/commandbox-gitbook"
     },
-    "scripts":{},
+    "scripts":{
+        "postVersion":"package set location='scottsteinbeck/commandbox-gitbook#v`package version`'",
+        "onRelease":"publish",
+        "postPublish":"!git push --follow-tags",
+    },
     "shortDescription":"Create a PDF eBook from any Gitbook data export",
-    "slug":"gitbook-pdf",
-    "testbox":{
-        "bundles":"",
-        "directory":"tests.specs",
-        "labels":"",
-        "options":{},
-        "recurse":true,
-        "reporter":"",
-        "runner":[
-            {
-                "default":""
-            }
-        ],
-        "testBundles":"",
-        "testSpecs":"",
-        "testSuites":"",
-        "verbose":true,
-        "watchDelay":500,
-        "watchPaths":"**.cfc"
-    },
+    "slug":"gitbook-exporter",
     "type":"commandbox-modules",
-    "version":"1.0.0"
+    "version":"0.9.0"
 }
