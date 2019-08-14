@@ -36,7 +36,16 @@ component {
 			.line()
 			.boldCyanLine( book.getTitle() );
 			
-		generateTOCNode( book.getTOC() );
+		var tocData = book.getTOC();	
+		tocData.each( ( section ) => {
+			
+			print
+				.line()
+				.indentedBoldAquaLine( section.title );
+				
+			generateTOCNode( section.children, '    ' );
+			
+		} );
 	}
 
 	/**
