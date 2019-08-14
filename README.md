@@ -200,6 +200,9 @@ CommandBox> gitbook export pageType=custom pageHeight=9.5 pageWidth=6.25 unit=in
 * *Scott Steinbeck* - https://twitter.com/uniquetrio2000
 * *Brad Wood* - https://twitter.com/bdw429s
 
+Development of this module was sponsored in part by Ortus Solutions. 
+https://ortussolutions.com/
+
 ## Support
 This is an open source and free module.  The source code is located here, and written in CFML:
 
