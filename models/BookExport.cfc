@@ -98,9 +98,13 @@ component accessors='true' {
 
 	/**
 	 * Fetched a cached JSON file by relative path to the sourcePath.
+	 *
+	 * @absolute Set to true, if passing an external path that's not inside the book sourcePath
 	 */
-	function retrieveJSON( required string filePath ) {
-		filePath = sourcePath & '/' & filePath;
+	function retrieveJSON( required string filePath, boolean absolute=false ) {
+		if( !absolute ) {
+			filePath = sourcePath & '/' & filePath;
+		}
 		
 		var JSONCache = getJSONCache();
 		var hashKey = hash( filePath );
@@ -225,6 +229,18 @@ component accessors='true' {
 		if( arguments.maxlength ){ slug = left( slug, arguments.maxlength ); }
 
 		return slug;
+	}
+
+	/**
+	 * Lookup http code and return description if available
+	 *
+	 * @httpCode HTTP code such as 404 or 200
+	 */
+	string function getHTTPCodeDesc( httpCode ) {
+		var httpCodes = retrieveJSON( expandPath( '/commandbox-gitbook/includes/httpcodes.json', true ) );
+		if( httpCodes.keyExists( httpCode ) ) return httpCodes[ httpCode ];
+		if( httpCodes.keyExists( left( httpCode, 1 ) & '00' ) ) return httpCodes[ left( httpCode, 1 ) & '00' ];
+		return '';
 	}
 
 

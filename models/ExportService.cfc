@@ -1,5 +1,5 @@
 /**
- * I render HTML for a book
+ * I handle exports for a GitBook into HTML, PDF, and other formats.
  */
 component accessors='true' {
 
@@ -11,13 +11,17 @@ component accessors='true' {
 
 	processingdirective pageEncoding='UTF-8';
 
+	/**
+	 * Constructor
+	 */
 	function init() {
 		return this;
 	}
 
 	/**
+	 * Entry method to process all exports for a book
 	 *
-	 *
+	 * @book Instance of BookExport object
 	 */
 	function exportAllTheThings( required book ) {
 		
@@ -37,6 +41,7 @@ component accessors='true' {
 	/**
 	 * Return array of strings representing HTML of each book page
 	 *
+	 * @book Instance of BookExport object
 	 */
 	function buildBookHTML( required book ) {
 		job.start( 'Render Book as HTML' );
@@ -128,6 +133,11 @@ component accessors='true' {
 				
 	}
 
+	/**
+	 * Render HTML to represent the entire book
+	 *
+	 * @book Instance of BookExport object 
+	 */
 	function renderBookHTML( book ) {
 		job.start( 'Building HTML' );
 		job.addLog( 'Writing HTML to #book.getHTMLExportFilePath()#' );
@@ -138,13 +148,10 @@ component accessors='true' {
 		job.complete();
 	}
 
-	
-		
-
-
 	/**
+	 * Take HTML and convert it to a PDF file based on the data stored in the book object
 	 *
-	 *
+	 * @book Instance of BookExport object 
 	 */
 	function renderBookPDF( book ) {
 		job.start( 'Building PDF' );
@@ -194,10 +201,21 @@ component accessors='true' {
 		
 	}
 
-	string function renderTableOfContents( book  ) {
+	/**
+	 * Render HTML to represent the Table of Contents
+	 *
+	 * @book Instance of BookExport object 
+	 */
+	string function renderTableOfContents( book ) {
 		return renderPartial( 'toc', { data : { TOCData : book.getTOC() } }, '', book );
 	}
 
+	/**
+	 * Render HTML to represent a single page
+	 *
+	 * @page Struct of data representing the page to render
+	 * @book Instance of BookExport object 
+	 */
 	function renderPage( required struct page, required book ) {
 		var pageJSON = book.getPageJSON( page.path );
 		
@@ -212,6 +230,13 @@ component accessors='true' {
 			book );
 	}
 
+	/**
+	 * Render HTML to represent a node in the docuemnt and all its children.
+	 *
+	 * @node Struct of data representing the node to render
+	 * @book Instance of BookExport object
+	 * @raw false to encode HTML, true to leave as-is 
+	 */
 	function renderNode( required struct node, book, boolean raw = false ) {
 		var innerContent = ( node.nodes ?: [] )
 			.map( (node) => {
@@ -239,6 +264,13 @@ component accessors='true' {
 		}
 	}
 
+	/**
+	 * Create markup for text ranges (like bold, italic, etc)
+	 * 
+	 * @node Struct of data representing the node to render
+	 * @book Instance of BookExport object
+	 * @raw false to encode HTML, true to leave as-is 
+	 */
 	function renderTextRanges( node, book, raw = false ) {
 		return node.ranges
 			.map( (r) => {
@@ -260,8 +292,14 @@ component accessors='true' {
 			.toList( '' );
 	}
 
-
-
+	/**
+	 * Render HTML markup with book data and return the result
+	 *
+	 * @template Relative path to partial cfm template
+	 * @node Struct of data representing the node to render
+	 * @innerContent String of HTML representing nested elements
+	 * @book Instance of BookExport object
+	 */
 	function renderPartial(
 		required string template,
 		struct node,

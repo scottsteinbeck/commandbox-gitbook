@@ -8,17 +8,11 @@ component accessors='true' {
 	property name='progressBar' inject='ProgressBar';
 	property name='configService' inject='configService';
 
+	/**
+	 * Constructor
+	 */
 	function init() {
 		return this;
-	}
-
-	function retrieveJSON( required string filePath ) {
-		var hashKey = hash( filePath );
-		if( VARIABLES.keyExists( hashKey ) ) return VARIABLES[ hashKey ];
-		
-		var fileContents = fileRead( filePath, 'UTF-8' );
-		VARIABLES[ hashKey ] = deserializeJSON( fileContents );
-		return VARIABLES[ hashKey ];
 	}
 
 	/**
@@ -29,27 +23,6 @@ component accessors='true' {
 	function isBook( required string bookDirectory ) {
 		return fileExists( bookDirectory & '/revision.json' );
 	}
-
-	/**
-	 * Get raw http codes data from httpcodes.json
-	 *
-	 */
-	struct function getHTTPCodes() {
-		return this.retrieveJSON( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ) );
-	}
-
-
-	/**
-	 * Lookup http code and return description if available
-	 *
-	 */
-	string function getHTTPCodeDesc( httpCode ) {
-		var httpCodes = this.getHTTPCodes();
-		if( httpCodes.keyExists( httpCode ) ) return httpCodes[ httpCode ];
-		if( httpCodes.keyExists( left( httpCode, 1 ) & '00' ) ) return httpCodes[ left( httpCode, 1 ) & '00' ];
-		return '';
-	}
-
 
 	/**
 	 * Generate unique file name from asset metadata
@@ -69,7 +42,7 @@ component accessors='true' {
 	 * in a folder of your choice.  Unique assets will be transfered from the assets
 	 * folder.  Duplicate names will be downloaded again.
 	 *
-	 * @bookDirectory Absolute path to Gitbook
+	 * @book Instance of BookExport object
 	 */
 	function resolveAssetsToDisk( required book ) {
 		job.start( 'Building Assets' );
@@ -111,6 +84,9 @@ component accessors='true' {
 
 	/**
 	 * Download external asset to local file
+	 *
+	 * @downloadURL HTTP URL to fetch asset from
+	 * @targetFilePath Local file path to save it as
 	 */
 	function acquireExternalAsset( required string downloadURL, required string targetFilePath ) {
 		progressableDownloader.download(
@@ -124,6 +100,8 @@ component accessors='true' {
 
 	/**
 	 * Resize image to reasonable size
+	 *
+	 * @targetFilePath Local file path to process.  Will overwrite itself.
 	 */
 	function resizeImage( required string targetFilePath ) {
 		var assetImage = imageRead( targetFilePath );
@@ -138,6 +116,15 @@ component accessors='true' {
 
 	/**
 	 * Resize image to reasonable size
+	 *
+	 * @embedURL HTTP URL to get embed data from
+	 *
+	 * @returns a struct with these keys:
+	 * - embdedHost
+	 * - pageTitle
+	 * - embedURL
+	 * - pageDescription
+	 * - pageIcon
 	 */
 	function resolveURLEmbedData( required string embedURL ) {
 		job.addLog( 'Resolving embed data for URL: #embedURL#' );
