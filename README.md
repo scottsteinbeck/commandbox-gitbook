@@ -175,13 +175,6 @@ Hint, when using the interactive CommandBox shell, you can use tab completion to
 
 There are a handful of export settings that are passed to the underlying PDF engine to help control the page size.  To see all the options run `gitbook export help`.
 
-* `coverPageImageFile` - Full or absolute path to an image file to completely replace the default book cover page.
-* `codeHighlighlightTheme` - A valid CSS theme for the Pygments syntax highlighter. See here: http://jwarby.github.io/jekyll-pygments-themes/
-* `showTOC` - Set to false to not render a Table Of Contents for the book (defaults to true)
-* `showPageNumbers` - Set to false to not render page numbers in header/footer (defaults to true)
-* `showTitleInPage` - Set to false to not render page title in header/footer (defaults to true)
-
-
 * `pageheight` - Page height in inches (default) or centimeters. Only applies to pagetype=custom
 * `pagewidth` - Page width in inches (default) or centimeters. Only applies to pagetype=custom
 * `pagetype` - Page sizes. legal, letter, A4, A5, B5, Custom
