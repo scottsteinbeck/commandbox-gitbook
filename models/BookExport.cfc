@@ -29,22 +29,40 @@ component accessors='true' {
 		setPages( [] );
 		setJSONCache( {} );
 		setTargetPathPartial( '' );
+		setExportVersion( '' )
 		
 		return this;
 	}
-
+	
+	/**
+	 * Load in basic data about book and resolve version
+	 */
 	function load() {
+		// Get book title and logo
 		var spacesObj = retrieveJSON( 'space.json' );
 		setTitle( spacesObj.name );		
 		setLogo( spacesObj.logoURL ?: '' );
 		
-		
+		// Validate and set export version
+		var revisionObj = retrieveJSON( 'revision.json' );
+		// If "current", just grab the primary version
 		if( getExportVersion() == 'current' ) {
-			setExportVersion( retrieveJSON( 'revision.json' ).primaryVersionID );
+			setExportVersion( getCurrentVersion() );
+		// otherwise, if we have a version, search for it
+		} else if( getExportVersion().len() ) {
+			// && !revisionObj.versions.keyExists( getExportVersion() )
+			var versionSearch = revisionObj.versions.filter( (k,v) => v.title == getExportVersion() );
+			if( versionSearch.len() ) {
+				setExportVersion( versionSearch.keyArray().first() );
+			// If we didn't find the version title, allow a direct ref name too.
+			} else if( !revisionObj.versions.keyExists( getExportVersion() ) ) {
+				throw( message='Versiomn [#getExportVersion()#] does not exist in this book.', detail='Valid verions are: [#revisionObj.versions.reduce( (acc, k, v) => acc.listAppend( v.title ), '' )#]', type='commandException' );
+			}
 		}
 
 		defaultRenderOpts();
 		
+		// Default file name partial if we don't have one.
 		if( getTargetPathPartial().endsWith( '\' ) || getTargetPathPartial().endsWith( '/' ) ) {
 			setTargetPathPartial( getTargetPathPartial() & slugify( getTitle() ) );
 		}
@@ -56,7 +74,7 @@ component accessors='true' {
 
 
 	/**
-	 * Get array of versions in a book
+	 * Get array of structs representing the version titles and IDs in the book
 	 *
 	 */
 	array function getVersions() {
@@ -71,10 +89,16 @@ component accessors='true' {
 		return retrieveJSON( 'revision.json' ).assets;
 	}
 	
+	/**
+	 * Read JSON for a given page
+	 */
 	function getPageJSON( pageName ) {
 		return retrieveJSON( 'versions/#getExportVersion()#/#pageName#.json' );
 	}	
 
+	/**
+	 * Fetched a cached JSON file by relative path to the sourcePath.
+	 */
 	function retrieveJSON( required string filePath ) {
 		filePath = sourcePath & '/' & filePath;
 		
@@ -92,7 +116,6 @@ component accessors='true' {
 
 	/**
 	 * Get current Version of a book
-	 *
 	 */
 	function getCurrentVersion() {
 		return retrieveJSON( 'revision.json' ).primaryVersionID;
@@ -101,11 +124,23 @@ component accessors='true' {
 
 	/**
 	 * Get struct representing table contents for a version of the book
-	 *
 	 */
 	array function getTOC() {
 		var revisionData = retrieveJSON( 'revision.json' );
 		var TOCData = [];
+		
+		// Resursive function for filtering page data		
+		var filterPageTitles = function( required array pages ) {
+			return pages.map( (v) => {
+				return [
+					'uid' : v.keyExists( 'uID' ) ? v.uID : '',
+					'title' : v.title,
+					'type' : v.kind == 'document' ? 'page' : 'section',
+					'path' : v.path,
+					'children' : filterPageTitles( v.pages )
+				];
+			} );
+		};
 
 		var topPage = revisionData.versions[ getExportVersion() ].page;
 
@@ -124,34 +159,36 @@ component accessors='true' {
 	}
 
 	/**
-	 * Resursive function for filtering page data
+	 * File name to save PDF export as
 	 */
-	private function filterPageTitles( required array pages ) {
-		return pages.map( (v) => {
-			return [
-				'uid' : v.keyExists( 'uID' ) ? v.uID : '',
-				'title' : v.title,
-				'type' : v.kind == 'document' ? 'page' : 'section',
-				'path' : v.path,
-				'children' : filterPageTitles( v.pages )
-			];
-		} );
-	}
-	
 	function getPDFExportFilePath() {
 		return getTargetPathPartial() & '.pdf';
 	}
 	
+	/**
+	 * File name to save HTML export as
+	 */
 	function getHTMLExportFilePath() {
 		return getTargetPathPartial() & '.html';
 	}
+	
+	/**
+	 * File name to save mobi export as
+	 */
 	function getMobiExportFilePath() {
 		return getTargetPathPartial() & '.mobi';
 	}
+	
+	/**
+	 * File name to save epub export as
+	 */
 	function getEpubExportFilePath() {
 		return getTargetPathPartial() & '.epub';
 	}
 	
+	/**
+	 * A little UDF to ensure default values are present on the renderOpts struct
+	 */
 	function defaultRenderOpts() {
 		var renderOpts = getRenderOpts();
 		renderOpts.coverPageImageFile = renderOpts.coverPageImageFile ?: '';
@@ -160,11 +197,16 @@ component accessors='true' {
 		renderOpts.showPageNumbers = renderOpts.showPageNumbers ?: true;
 	}
 
+	/**
+	 * Asset directory to use relative to the book source path
+	 */
 	function getAssetDirectory() {
 		return getSourcePath() & '/resolvedAssets';		
 	}
 
-	// Create a URL safe slug from a string
+	/**
+	 * Create a URL safe slug from a string
+	 */
 	function slugify( required string str, numeric maxLength=0, string allow='' ) {
 		// Cleanup and slugify the string
 		var slug 	= trim( arguments.str );

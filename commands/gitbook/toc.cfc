@@ -39,6 +39,9 @@ component {
 		generateTOCNode( book.getTOC() );
 	}
 
+	/**
+	* Recursivley print TOC as a tree
+	*/
 	private function generateTOCNode( array TOCNodes, string prefix='' ) {
 		var i = 0;
 		var childrenCount = TOCNodes.len();
