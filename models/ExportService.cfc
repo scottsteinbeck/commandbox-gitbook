@@ -206,9 +206,9 @@ component accessors='true' {
 	string function generateTOCNode( array TOCNodes ) {
 		var TOCContent = '<ul>';
 		TOCNodes.each( (child) => {
-			TOCContent &= '<li>#child.title#';
+			TOCContent &= '<li><p>#child.title#';
 			if( child.children.len() ) TOCContent &= generateTOCNode( child.children );
-			TOCContent &= '</li>';
+			TOCContent &= '</p></li>';
 		} );
 		TOCContent &= '</ul>';
 		return TOCContent;
