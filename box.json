@@ -24,7 +24,7 @@
             "URL":""
         }
     ],
-    "location":"",
+    "location":"scottsteinbeck/commandbox-gitbook#v1.0.0",
     "name":"GitBook Exporter",
     "private":false,
     "projectURL":"https://github.com/scottsteinbeck/commandbox-gitbook/",
@@ -35,10 +35,10 @@
     "scripts":{
         "postVersion":"package set location='scottsteinbeck/commandbox-gitbook#v`package version`'",
         "onRelease":"publish",
-        "postPublish":"!git push --follow-tags",
+        "postPublish":"!git push --follow-tags"
     },
     "shortDescription":"Create a PDF eBook from any Gitbook data export",
     "slug":"gitbook-exporter",
     "type":"commandbox-modules",
-    "version":"0.9.0"
+    "version":"1.0.0"
 }
