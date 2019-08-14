@@ -36,8 +36,7 @@ component {
 			.line()
 			.boldCyanLine( book.getTitle() & ( book.getVersions().len() ? ' (#book.getExportVersion()#)' : '' ) );
 			
-		var tocData = book.getTOC();	
-		tocData.each( ( section ) => {
+		book.getTOC().each( ( section ) => {
 			
 			print
 				.line()
