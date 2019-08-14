@@ -25,28 +25,30 @@ component {
 
 	/**
 	 * @sourcePath Directory or zip file path where the JSON export is for a Gitbook
-	 * @targetDir
-	 * @targetFile  
-	 * @version Version of the book to act on.
+	 * @targetDir Directory where the exports will be written
+	 * @targetFile File name to write without extension.
+	 * @version Version of the book to act on
 	 * @version.optionsUDF versionsComplete
-	 * @pageheight Specifies the page height in inches (default) or centimeters. Only applies to pagetype=custom. 
-	 * @pagewidth Specifies the page width in inches (default) or centimeters. Only applies to pagetype=custom.
-	 * @pagetype Preset page sizes. legal, letter, A4, A5, B5, Custom. 
+	 * @pageheight Page height in inches (default) or centimeters. Only applies to pagetype=custom 
+	 * @pagewidth Page width in inches (default) or centimeters. Only applies to pagetype=custom
+	 * @pagetype Preset page sizes. legal, letter, A4, A5, B5, Custom 
 	 * @pagetype.options legal,letter,A4,A5,B5,custom	 
-	 * @orientation Specifies the page orientation. Specify either of the following: portrait (default), landscape
+	 * @orientation Page orientation. Specify either of the following: portrait (default), landscape
 	 * @orientation.options portrait,landscape
-	 * @margintop Specifies the top margin in inches (default) or centimeters.
-	 * @marginbottom Specifies the bottom margin in inches (default) or centimeters. 
-	 * @marginleft Specifies the left margin in inches (default) or centimeters.
-	 * @marginright Specifies the right margin in inches (default) or centimeters. 
-	 * @unit Specifies the default unit (inches or centimeters) for pageheight, pagewidth, and margin attributes.
+	 * @margintop Top margin in inches (default) or centimeters
+	 * @marginbottom Bottom margin in inches (default) or centimeters 
+	 * @marginleft Left margin in inches (default) or centimeters
+	 * @marginright Right margin in inches (default) or centimeters 
+	 * @unit Default unit ("in" or "cm") for pageheight, pagewidth, and margin parameters
 	 * @unit.options in,cm
-	 * @coverPageImageFile An image that will completely replace the default cover page. Use image same dimensions/size as page.
+	 * @coverPageImageFile An image that will completely replace the default cover page. Use image same dimensions/size as page
 	 * @codeHighlighlightTheme Name of Pygments theme to use for code blocks. http://jwarby.github.io/jekyll-pygments-themes/
 	 * @codeHighlighlightTheme.options autumn,borland,bw,colorful,default,emacs,friendly,fruity,manni,monokai,murphy,native,pastie,perldoc,tango,trac,vim,vs
 	 * @showTOC Set to false to not render a Table Of Contents for the book
 	 * @showPageNumbers Set to false to not render page numbers in header/footer
 	 * @showTitleInPage Set to false to not render page title in header/footer
+	 * @PDF Generate PDF export
+	 * @HTML Generate HTML export
 	 * @verbose Leave full console log for content generation for debugging
 	 */
 	function run(
