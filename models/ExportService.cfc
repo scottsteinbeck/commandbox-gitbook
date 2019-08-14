@@ -44,7 +44,7 @@ component accessors='true' {
 		var bookLogo = book.getLogo();
 		
 		job.start( 'Build Table Of Contents' );
-			var TOCData = book.getTOC();
+		var TOCData = book.getTOC();
 		job.complete();
 		
 		bookService.resolveAssetsToDisk( book )
@@ -60,7 +60,7 @@ component accessors='true' {
 			);	
 		}
 		if( book.getRenderOpts().showTOC ) {
-			pages.append( renderTableOfContents( TOCData ) );
+			pages.append( renderTableOfContents( book ) );
 		}
 
 		job.start( 'Render Pages' );
@@ -83,11 +83,10 @@ component accessors='true' {
 		var renderChildren = function(tree) {
 			tree.each( (child) => {
 				job.addLog( child.title );
-				pages.append( '<h1 id="#child.uid#" class="#child.type#">#child.title#</h1>' );
 				if( child.type == 'page' ) {
 					currentCount++;
 					pages.append(
-						renderPage( child.path, book )
+						renderPage( child, book )
 					);
 					progressBarGeneric.update(
 						percent = ( currentCount / totalPages ) * 100,
@@ -195,29 +194,22 @@ component accessors='true' {
 		
 	}
 
-	string function renderTableOfContents( array TOCNodes ) {
-		var TOCPage = '<div class="document toc">';
-		TOCPage &= '<h1 class="page">Table of Contents</h1>';
-		TOCPage &= generateTOCNode( TOCNodes , 0 );
-		TOCPage &= '</div>';
-		return TOCPage;
+	string function renderTableOfContents( book  ) {
+		return renderPartial( 'toc', { data : { TOCData : book.getTOC() } }, '', book );
 	}
 
-	string function generateTOCNode( array TOCNodes, number depth=0 ) {
-		var TOCContent = '<ul>';
-		var subDepth = depth + 1; 
-		TOCNodes.each( (child) => {
-			TOCContent &= '<li class="d_#depth#"><div class="d_#depth#">#child.title#</div>';
-			if( child.children.len() ) TOCContent &= generateTOCNode( child.children, subDepth );
-			TOCContent &= '</li>';
-		} );
-		TOCContent &= '</ul>';
-		return TOCContent;
-	}
-
-	function renderPage( required string pageName, required book ) {
-		var pageJSON = book.getPageJSON( pageName );
-		return !isNull( pageJSON ) ? renderNode( pageJSON.document, book ) : '';
+	function renderPage( required struct page, required book ) {
+		var pageJSON = book.getPageJSON( page.path );
+		
+		return renderPartial(
+			'page',
+			{
+				data : {
+					page : page
+				}
+			},
+			( !isNull( pageJSON ) ? renderNode( pageJSON.document, book ) : '' ),
+			book );
 	}
 
 	function renderNode( required struct node, book, boolean raw = false ) {
@@ -281,7 +273,7 @@ component accessors='true' {
 		template = '/commandbox-gitbook/includes/partials/' & template & '.cfm';
 
 		if( !fileExists( template ) ) {
-			return '<div class="missing-element-type">[ #node.type# ] #innerContent#</div>';
+			template = '/commandbox-gitbook/includes/partials/missing-element-type.cfm';
 		}
 
 		saveContent variable='local.HTML' {
