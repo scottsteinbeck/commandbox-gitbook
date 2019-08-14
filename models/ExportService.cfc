@@ -196,19 +196,20 @@ component accessors='true' {
 	}
 
 	string function renderTableOfContents( array TOCNodes ) {
-		var TOCPage = '<div class="document">';
+		var TOCPage = '<div class="document toc">';
 		TOCPage &= '<h1 class="page">Table of Contents</h1>';
-		TOCPage &= generateTOCNode( TOCNodes );
+		TOCPage &= generateTOCNode( TOCNodes , 0 );
 		TOCPage &= '</div>';
 		return TOCPage;
 	}
 
-	string function generateTOCNode( array TOCNodes ) {
+	string function generateTOCNode( array TOCNodes, number depth=0 ) {
 		var TOCContent = '<ul>';
+		var subDepth = depth + 1; 
 		TOCNodes.each( (child) => {
-			TOCContent &= '<li><p>#child.title#';
-			if( child.children.len() ) TOCContent &= generateTOCNode( child.children );
-			TOCContent &= '</p></li>';
+			TOCContent &= '<li class="d_#depth#"><div class="d_#depth#">#child.title#</div>';
+			if( child.children.len() ) TOCContent &= generateTOCNode( child.children, subDepth );
+			TOCContent &= '</li>';
 		} );
 		TOCContent &= '</ul>';
 		return TOCContent;
