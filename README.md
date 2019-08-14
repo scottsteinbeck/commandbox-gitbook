@@ -70,7 +70,7 @@ You can point to the zip when you run a command
 CommandBox> gitbook toc /path/to/export.zip
 ```
 
-Or you can unzip the archive and point to the folder wcich will prevent the temp fies from being deleted every time you run an export:
+Or you can unzip the archive and point to the folder which will prevent the temp fies from being deleted every time you run an export:
 
 ```bash
 CommandBox> gitbook toc /path/to/exportFolder
