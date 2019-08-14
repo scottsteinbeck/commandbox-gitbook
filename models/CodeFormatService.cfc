@@ -54,7 +54,7 @@ component accessors='true' singleton {
 					 & 'lexResult = get_lexer_by_name( syntax ).__class__.__name__'
 				);
 			} catch( any e ) {
-				// Classnotfound means Pygments coldn't find anything
+				// Classnotfound means Pygments couldn't find anything
 				if(
 					!e.getPageException()
 						.getRootCause()
@@ -80,7 +80,7 @@ component accessors='true' singleton {
 					 & 'lexResult = get_lexer_for_filename( fileName ).__class__.__name__'
 				);
 			} catch( any e ) {
-				// Classnotfound means Pygments coldn't find anything
+				// Classnotfound means Pygments couldn't find anything
 				if(
 					!e.getPageException()
 						.getRootCause()
@@ -104,7 +104,7 @@ component accessors='true' singleton {
 				 & 'lexResult = guess_lexer( code ).__class__.__name__'
 			);
 		} catch( any e ) {
-			// Classnotfound means Pygments coldn't find anything
+			// Classnotfound means Pygments couldn't find anything
 			if(
 				!e.getPageException()
 					.getRootCause()
