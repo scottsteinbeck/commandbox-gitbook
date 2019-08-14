@@ -11,7 +11,7 @@ https://commandbox.ortusbooks.com/setup/installation
 Once you have `box`, install this module with the following command:
 
 ```bash
-box install commandbox-gitbook
+box install gitbook-exporter
 ```
 
 To check for updates, run the following command
