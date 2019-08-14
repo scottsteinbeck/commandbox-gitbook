@@ -78,10 +78,15 @@ component {
 		bookService = getInstance( 'BookService@commandbox-gitbook' );
 		// For testing, remove later
 
+		// Make paths absolute
 		arguments.sourcePath = resolvePath( arguments.sourcePath ?: '' );
+		arguments.targetDir = resolvePath( arguments.targetDir ?: '' );
+		if( len( coverPageImageFile ) ) { coverPageImageFile = resolvepath( coverPageImageFile ); }
+		
+		// We may override this below if we need to unzip the book
 		var actualSourcePath = arguments.sourcePath;
 		
-		arguments.targetDir = resolvePath( arguments.targetDir ?: '' );
+		// Ensure target dir ends with a slash. (if the folder doesn't exist yet, it won't)
 		if( !'/,\'.listFindNoCase( targetDir.right( 1 ) ) ) {
 			targetDir &= '/';
 		}
@@ -92,18 +97,20 @@ component {
 		if( targetFile.len() && targetFile.listLen( '.' ) > 1 && 'pdf,html,mobi,epub'.listFindNoCase( targetFile.listLast( '.' ) ) ) {
 			targetFile = targetFile.listDeleteAt( targetFile.listLen( '.' ), '.' );
 		}
-		 	
+		
 		var targetPathPartial = targetDir & targetFile;
 		
+		// validation for height but no width
 		if( !isNull( arguments.pageheight ) && isNull( arguments.pagewidth ) ) {
 			error( 'You cannot set a pageheight but not a pagewidth. Please provide both, or use a pre-defined pageType.' );
 		}
 		
+		// validation for width but no height
 		if( !isNull( arguments.pagewidth ) && isNull( arguments.pageheight ) ) {
 			error( 'You cannot set a pagewidth but not a pageheight. Please provide both, or use a pre-defined pageType.' );
 		}
 		
-		
+		// Auto-set this for people who are either forgetful or don't read the docs
 		if( !isNull( arguments.pageheight ) || !isNull( arguments.pagewidth ) ) {
 			arguments.pagetype='custom';
 		}
@@ -112,9 +119,10 @@ component {
 		try {
 	
 			// This is sort of a dumb job step, just created it to have a wrapper since the PDF bit isn't in a service yet
-			job.start( 'Processing' );
+			job.start( 'Processing Export' );
 			job.setDumpLog( verbose );
 					
+			// if this is a zip file, unzip it
 			if( fileExists( arguments.sourcePath ) && arguments.sourcePath.right( 4 ) == '.zip' ) {
 				cleanUpTemp = true;
 				actualSourcePath = tempDir & '/' & 'gitbook#createUUID()#/';
@@ -123,23 +131,21 @@ component {
 				job.addLog( 'Done.' );
 			}
 			
-	
+			// Make sure we're dealing with a bonafide book
 			if( !bookService.isBook( actualSourcePath ) ) {
-				error( 'A revision.json file is not present in this folder.  Please check your path.' );
-			}
-	
-			if( len( coverPageImageFile ) ) {
-				coverPageImageFile = resolvepath( coverPageImageFile );
+				error( 'A revision.json file is not present in this path.  Please check your path.' );
 			}
 			
+			// General rendering settings for the book
 			var renderOpts = {
 				coverPageImageFile : coverPageImageFile,
 				codeHighlighlightTheme : codeHighlighlightTheme,
 				showTOC : showTOC,
 				showPageNumbers : showPageNumbers,
 				showTitleInPage : showTitleInPage
-			};			
+			};
 	
+			// These options are specifically for the cfdocument tag
 			var PDFOpts = {};
 			var refArguments = arguments;
 			'pageheight,pagewidth,pagetype,orientation,margintop,marginbottom,marginleft,marginright,unit'.listEach( ( p ) => {
@@ -148,13 +154,13 @@ component {
 				}
 			} );
 
+			// Load up a book instance to hold all our data
 			var book = getInstance( 'BookExport@commandbox-gitbook' )
 				.setSourcePath( actualSourcePath )
 				.setExportVersion( version )
 				.setTargetPathPartial( targetPathPartial )
 				.setRenderOpts( renderOpts )
 				.setPDFOpts( PDFOpts );
-				
 				
 			// If nothing was specified, do all formats
 			if( isNull( arguments.PDF ) && isNull( arguments.HTML ) ) {
@@ -166,12 +172,15 @@ component {
 			} else {
 				book.setCreatePDF( arguments.PDF ?: true ).setCreateHTML( arguments.HTML ?: true );				
 			}
-				
+			
+			// Process the data to read in basic stuff like titles, logo URLs, etc
 			book.load();
 			
+			// Off to the races
 			ExportService.exportAllTheThings( book );
 			
 		} finally {
+			// If we unzipped our book, clean up after we're done.
 			if( cleanUpTemp && directoryExists( actualSourcePath ) ) {
 				directoryDelete( actualSourcePath, true );
 			}
@@ -198,8 +207,21 @@ component {
 
 	function versionsComplete() {
 		try {
-			return bookService.getVersions( resolvePath( '' ) );
+			var sourcepath = resolvepath( arguments.passedNamedParameters.sourcepath ?: '' );
+			if( fileExists( sourcepath ) && sourcepath.right( 4 ) == '.zip' ) {
+				sourcePath = 'zip://' & sourcePath & '!';
+			}
+			
+			if( bookService.isBook( sourcePath ) ) {
+				return getInstance( 'BookExport@commandbox-gitbook' )
+					.setSourcePath( sourcePath )
+					.getVersions()
+					.map( (v) => v.title );
+			}
+			return [];
+			
 		} catch( any e ) {
+			return [];
 		}
 	}
 

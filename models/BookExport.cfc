@@ -28,6 +28,7 @@ component accessors='true' {
 		setPDFOpts( {} );		
 		setPages( [] );
 		setJSONCache( {} );
+		setTargetPathPartial( '' );
 		
 		return this;
 	}
@@ -59,7 +60,7 @@ component accessors='true' {
 	 *
 	 */
 	array function getVersions() {
-		return retrieveJSON( 'revision.json' ).versions.reduce( (acc, k, v) => acc.append( v.title ), [] );
+		return retrieveJSON( 'revision.json' ).versions.reduce( (acc, k, v) => acc.append( { title : v.title, id : k } ), [] );
 	}
 
 	/**
@@ -103,7 +104,6 @@ component accessors='true' {
 	 *
 	 */
 	array function getTOC() {
-		job.start( 'Build Table Of Contents' );
 		var revisionData = retrieveJSON( 'revision.json' );
 		var TOCData = [];
 
@@ -119,8 +119,6 @@ component accessors='true' {
 			] );
 			TOCData.append( filterPageTitles( topPage.pages ), true );
 		}
-
-		job.complete();
 
 		return TOCData;
 	}

@@ -42,7 +42,11 @@ component accessors='true' {
 		job.start( 'Render Book as HTML' );
 
 		var bookLogo = book.getLogo();
-		var TOCData = book.getTOC();
+		
+		job.start( 'Build Table Of Contents' );
+			var TOCData = book.getTOC();
+		job.complete();
+		
 		bookService.resolveAssetsToDisk( book )
 		var pages = [];
 

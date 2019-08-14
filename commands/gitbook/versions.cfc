@@ -6,14 +6,32 @@ component {
 	property name='BookService' inject='BookService@commandbox-gitbook';
 
 	/**
-	 * @bookDirectory Directory where the JSON export is for a Gitbook
+	 * @sourcePath Directory where the JSON export is for a Gitbook
 	 */
-	function run( string bookDirectory = resolvePath( '' ) ) {
-		if( !bookService.isBook( bookDirectory ) ) {
-			error( 'A revision.json file is not present in this folder.  Please check your path.' );
+	function run( string sourcePath ) {
+		
+		arguments.sourcePath = resolvePath( arguments.sourcePath ?: '' );
+		if( fileExists( sourcepath ) && sourcepath.right( 4 ) == '.zip' ) {
+			sourcePath = 'zip://' & sourcePath & '!';
+		}
+		
+		if( !bookService.isBook( sourcePath ) ) {
+			error( 'A revision.json file is not present in this path.  Please check your path.' );
 		}
 
-		bookService.getVersions( bookDirectory ).each( (v) => print.line( v ) );
+		var book = getInstance( 'BookExport@commandbox-gitbook' )
+				.setSourcePath( sourcePath )
+				.load();
+				
+		print
+			.line()
+			.boldCyanLine( book.getTitle() )
+			.line();
+		
+		book
+			.getVersions()
+			.each( (v) => print.line( ' - #v.title# #v.title != v.id ? "(#v.id#)" : ""#' ) );
+
 	}
 
 }
