@@ -110,7 +110,13 @@ component accessors='true' {
 		
 		var fileContents = fileRead( filePath, 'UTF-8' );
 		JSONCache[ hashKey ] = deserializeJSON( fileContents );
-		return JSONCache[ hashKey ];
+		
+		// JSON docs can be null
+		if( isNull( JSONCache[ hashKey ] ) ) {
+			return;
+		} else {
+			return JSONCache[ hashKey ];	
+		}
 	}
 
 
