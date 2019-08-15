@@ -237,7 +237,7 @@ component accessors='true' {
 	 * @httpCode HTTP code such as 404 or 200
 	 */
 	string function getHTTPCodeDesc( httpCode ) {
-		var httpCodes = retrieveJSON( expandPath( '/commandbox-gitbook/includes/httpcodes.json', true ) );
+		var httpCodes = retrieveJSON( expandPath( '/commandbox-gitbook/includes/httpcodes.json' ), true );
 		if( httpCodes.keyExists( httpCode ) ) return httpCodes[ httpCode ];
 		if( httpCodes.keyExists( left( httpCode, 1 ) & '00' ) ) return httpCodes[ left( httpCode, 1 ) & '00' ];
 		return '';

@@ -117,7 +117,8 @@ component accessors='true' {
 	/**
 	 * Resize image to reasonable size
 	 *
-	 * @embedURL HTTP URL to get embed data from
+	 * @node Struct of data for this node
+	 * @book Instance of BookExport object
 	 *
 	 * @returns a struct with these keys:
 	 * - embdedHost
@@ -126,7 +127,8 @@ component accessors='true' {
 	 * - pageDescription
 	 * - pageIcon
 	 */
-	function resolveURLEmbedData( required string embedURL ) {
+	function resolveURLEmbedData( required struct node, book ) {
+		var embedURL = node.data.url;
 		job.addLog( 'Resolving embed data for URL: #embedURL#' );
 
 		// This Java class gives us handy access to the host part of the URL without custom parsing
@@ -178,30 +180,66 @@ component accessors='true' {
 				PageXML,
 				'//*[translate(local-name(),"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")="title"][1]'
 			);
-			if( titleSearch.len() && titleSearch[ 1 ].keyExists( 'xmlText' ) )
+			if( titleSearch.len() && titleSearch[ 1 ].keyExists( 'xmlText' ) ) {
 				embedData.pageTitle = titleSearch[ 1 ].xmlText;
+			}
 
 			// Look for meta description
 			var descriptionSearch = xmlSearch(
 				PageXML,
 				'//*[local-name()="head"]/*[local-name()="meta"][@name="description"][1]'
 			);
-			if( descriptionSearch.len() && descriptionSearch[ 1 ].XmlAttributes.keyExists( 'content' ) )
+			if( descriptionSearch.len() && descriptionSearch[ 1 ].XmlAttributes.keyExists( 'content' ) ) {
 				embedData.pageDescription = descriptionSearch[ 1 ].XmlAttributes.content;
+			}
 
 			// Look for favicon
 			var faviconSearch = xmlSearch( PageXML, '//*[local-name()="head"]/*[local-name()="link"][@rel="icon"][1]' );
-			if( faviconSearch.len() && faviconSearch[ 1 ].XmlAttributes.keyExists( 'href' ) )
-				embedData.pageIcon = faviconSearch[ 1 ].XmlAttributes.href;
+			if( faviconSearch.len() && faviconSearch[ 1 ].XmlAttributes.keyExists( 'href' ) ) {
+				var iconURL = faviconSearch[ 1 ].XmlAttributes.href;
+				// Decide what we'd call this iamge if we were to have already downloaded it
+				var localpath = book.getAssetDirectory() & '/embed-icon-#node.key#-#iconURL.listLast( '/' ).listFirst( '?' )#';
+				// if it doesn't exist already
+				if( !fileExists( localPath ) ) {
+					// Download it
+					acquireExternalAsset( iconURL, localpath );
+					// Convert ICOs to PNGs.
+					if( localpath.listLast( '.' ) == 'ico' ) {
+						convertICOtoPNG( localpath, localpath & '.png' )
+						localpath = localpath & '.png';
+						resizeImage( localpath );
+					}
+				
+				}
+				
+				embedData.pageIcon = localpath;
+			}
 
 			job.addLog( 'Found: #embedData.pageTitle#' );
 		} catch( any e ) {
+			rethrow;
 			// There's a lot of things that could go wrong here, but we're just going to ignore them.
 			job.addErrorLog( 'Error getting link preview: #e.message#' );
 		}
 
 
 		return embedData;
+	}
+
+	/**
+	 * Convert an ICO file to a PNG
+	 *
+	 * @sourceFile Absolute path of ICO to read in
+	 * @targetFile Absolute path of PNG to write out
+	 */
+	function convertICOtoPNG( required string sourceFile, required string targetFile ) {
+		var jSourceFile = createObject( 'java', 'java.io.File' ).init( sourceFile );
+		var jTargetFile = createObject( 'java', 'java.io.File' ).init( targetFile );
+		
+		// Read in ICO file to array of BufferedImage objects
+		var images = createObject( 'java', 'net.sf.image4j.codec.ico.ICODecoder' ).read( jSourceFile );
+		// Write out the first image in the array to a PNG file
+		createObject( 'java', 'javax.imageio.ImageIO' ).write( images.get(0), "png", jTargetFile );
 	}
 
 }

@@ -3,7 +3,8 @@
     "bugs":"https://github.com/scottsteinbeck/commandbox-gitbook/issues",
     "dependencies":{
         "pygments-2.4.2":"jar:https://search.maven.org/remotecontent?filepath=org/pygments/pygments/2.4.2/pygments-2.4.2.jar",
-        "jython-standalone-2.7.1":"jar:https://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.7.1/jython-standalone-2.7.1.jar"
+        "jython-standalone-2.7.1":"jar:https://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.7.1/jython-standalone-2.7.1.jar",
+        "image4j-0.7":"jar:https://search.maven.org/remotecontent?filepath=org/jclarion/image4j/0.7/image4j-0.7.jar"
     },
     "documentation":"https://github.com/scottsteinbeck/commandbox-gitbook/blob/master/README.md",
     "homepage":"www.aresdev.com",
@@ -14,7 +15,8 @@
     ],
     "installPaths":{
         "pygments-2.4.2":"lib/pygments-2.4.2/",
-        "jython-standalone-2.7.1":"lib/jython-standalone-2.7.1/"
+        "jython-standalone-2.7.1":"lib/jython-standalone-2.7.1/",
+        "image4j-0.7":"lib/image4j-0.7/"
     },
     "instructions":"",
     "keywords":"gitbook, pdf, ebook",

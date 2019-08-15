@@ -1,6 +1,6 @@
 <cfoutput>
 	<cfif node.data.keyExists( 'url' ) >
-		<cfset embedData = bookService.resolveURLEmbedData( node.data.url )>
+		<cfset embedData = bookService.resolveURLEmbedData( node, book )>
 		<div class="embed">
 			<table colspacing=0 class="no-border">
 				<tr>
@@ -17,8 +17,7 @@
 					</td>
 					<cfif len( embedData.pageIcon ) >
 					<td width="40">
-							<!--- TODO: Cache this locally as an asset --->
-							<img width="40" src="#embedData.pageIcon#" />
+							<img width="40" src="file:///#embedData.pageIcon#" />
 						</td>
 					</cfif>
 				</tr>
