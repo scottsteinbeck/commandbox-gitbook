@@ -217,7 +217,6 @@ component accessors='true' {
 
 			job.addLog( 'Found: #embedData.pageTitle#' );
 		} catch( any e ) {
-			rethrow;
 			// There's a lot of things that could go wrong here, but we're just going to ignore them.
 			job.addErrorLog( 'Error getting link preview: #e.message#' );
 		}
