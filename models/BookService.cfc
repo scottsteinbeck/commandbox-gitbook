@@ -244,7 +244,7 @@ component accessors='true' {
 					
 					embedData.pageIcon = actualLocalpath;
 				} catch( any e ) {
-					job.addErrorLog( 'No favicon found for this link' );
+					job.addWarnLog( 'No favicon found for this link' );
 				}
 					
 			}
