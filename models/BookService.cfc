@@ -199,6 +199,10 @@ component accessors='true' {
 				var iconURL = faviconSearch[ 1 ].XmlAttributes.href;
 				// Decide what we'd call this iamge if we were to have already downloaded it
 				var localpath = book.getAssetDirectory() & '/embed-icon-#node.key#-#iconURL.listLast( '/' ).listFirst( '?' )#';
+				var actualLocalpath = localpath;
+				if( localpath.listLast( '.' ) == 'ico' ) {
+					actualLocalpath = localpath & '.png';
+				}
 				// if it doesn't exist already
 				if( !fileExists( localPath ) ) {
 					// Download it
@@ -210,9 +214,39 @@ component accessors='true' {
 						resizeImage( localpath );
 					}
 				
-				}
+				} 
 				
-				embedData.pageIcon = localpath;
+				embedData.pageIcon = actualLocalpath;
+				
+			// Look for a favicon at this URL
+			} else {
+				try {
+					var thisURL = createObject( 'java', 'java.net.URL' ).init( embedURL );
+					var iconURL = thisURL.getProtocol() & '://' & thisURL.getHost() & ( thisURL.getPort() > 0 ? ':' & thisURL.getPort() : '' ) & '/favicon.ico';
+					// Decide what we'd call this iamge if we were to have already downloaded it
+					var localpath = book.getAssetDirectory() & '/embed-icon-#node.key#-#iconURL.listLast( '/' ).listFirst( '?' )#';
+					var actualLocalpath = localpath;
+					if( localpath.listLast( '.' ) == 'ico' ) {
+						actualLocalpath = localpath & '.png';
+					}
+					// if it doesn't exist already
+					if( !fileExists( localPath ) ) {
+						
+						// Download it
+						acquireExternalAsset( iconURL, localpath );
+						
+						// Convert ICOs to PNGs.
+						convertICOtoPNG( localpath, localpath & '.png' )
+						localpath = localpath & '.png';
+						resizeImage( localpath );
+					
+					} 
+					
+					embedData.pageIcon = actualLocalpath;
+				} catch( any e ) {
+					job.addErrorLog( 'No favicon found for this link' );
+				}
+					
 			}
 
 			job.addLog( 'Found: #embedData.pageTitle#' );
