@@ -5,7 +5,7 @@
 			<tr>
 				<td>
 					<cfif book.getRenderOpts().showTitleInPage >
-						#book.getTitle()#
+						#encodeForHTML( book.getTitle() )#
 					</cfif>
 				</td>
 				<td align="right">

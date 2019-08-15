@@ -13,7 +13,7 @@
 								#encodeForHTML( embedData.pageDescription )#
 							</div>
 						</cfif>
-						<span class="link"><a href="#embedData.embedURL#" target="_blank">#embedData.embdedHost#</a></span>
+						<span class="link"><a href="#embedData.embedURL#" target="_blank">#encodeForHTML( embedData.embdedHost )#</a></span>
 					</td>
 					<cfif len( embedData.pageIcon ) >
 					<td width="40">

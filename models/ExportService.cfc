@@ -98,6 +98,10 @@ component accessors='true' {
 						currentCount = currentCount,
 						totalCount = totalPages
 					);
+				} else if( child.type == 'section' ) {
+					pages.append(
+						renderPartial( 'section', { data : { section : child } }, '', book )
+					);
 				}
 				renderChildren( child.children );
 			} );

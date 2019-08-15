@@ -6,7 +6,7 @@
 	<ul>
 	<cfset var subDepth = depth + 1> 
 	<cfloop array="#TOCData#" item="local.child" >
-		<li class="d_#depth#"><div class="d_#depth#">#child.title#</div>
+		<li class="d_#depth#"><div class="d_#depth#">#encodeForHTML( child.title )#</div>
 		<cfif child.children.len() >
 			 #generateTOCNode( child.children, subDepth )#
 		</cfif>

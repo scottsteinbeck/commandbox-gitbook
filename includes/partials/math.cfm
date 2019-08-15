@@ -1,3 +1,3 @@
 <cfoutput>
-	<div class="math">#node.data.formula#</div>
+	<div class="math">#encodeForHTML( node.data.formula )#</div>
 </cfoutput>

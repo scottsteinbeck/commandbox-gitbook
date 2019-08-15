@@ -1,3 +1,3 @@
 <cfoutput> 
-	<div class="missing-element-type">[ #node.type# ] #innerContent#</div>
+	<div class="missing-element-type">[ #encodeForHTML( node.type )# ] #innerContent#</div>
 </cfoutput>
