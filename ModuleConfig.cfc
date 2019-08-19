@@ -5,8 +5,7 @@ component {
 	this.cfmapping = 'commandbox-gitbook';
 
 	function configure() {
-		settings = {
-		};
+		settings = {};
 	}
 
 }

@@ -53,15 +53,15 @@ component accessors='true' {
 
 		// Find assets in the JSON that have the same name.  We'll need to re-download these!
 		var dupeAssets = assetCollection
-			.reduce( (dupeAssets, k, v) => {
+			.reduce( ( dupeAssets, k, v ) => {
 				dupeAssets[ v.name ] = dupeAssets[ v.name ] ?: 0;
 				dupeAssets[ v.name ]++;
 				return dupeAssets;
 			}, {} )
-			.filter( (k, v) => v > 1 );
+			.filter( ( k, v ) => v > 1 );
 
 		// Loop over each asset and transfer it from the assets folder, or download as neccessary
-		assetCollection.each( (assetID, assetData) => {
+		assetCollection.each( ( assetID, assetData ) => {
 			job.addLog( assetData.name );
 			var sourcePath = book.getSourcePath() & '/assets/' & assetData.name;
 			var targetFilePath = book.getAssetDirectory() & '/' & getAssetUniqueName( assetData );
@@ -92,7 +92,7 @@ component accessors='true' {
 		progressableDownloader.download(
 			downloadURL,
 			targetFilePath,
-			function(status) {
+			function( status ) {
 				progressBar.update( argumentCollection = status );
 			}
 		);
@@ -213,16 +213,17 @@ component accessors='true' {
 						localpath = localpath & '.png';
 						resizeImage( localpath );
 					}
-				
-				} 
-				
+				}
+
 				embedData.pageIcon = actualLocalpath;
-				
-			// Look for a favicon at this URL
+
+				// Look for a favicon at this URL
 			} else {
 				try {
 					var thisURL = createObject( 'java', 'java.net.URL' ).init( embedURL );
-					var iconURL = thisURL.getProtocol() & '://' & thisURL.getHost() & ( thisURL.getPort() > 0 ? ':' & thisURL.getPort() : '' ) & '/favicon.ico';
+					var iconURL = thisURL.getProtocol() & '://' & thisURL.getHost() & (
+						thisURL.getPort() > 0 ? ':' & thisURL.getPort() : ''
+					) & '/favicon.ico';
 					// Decide what we'd call this iamge if we were to have already downloaded it
 					var localpath = book.getAssetDirectory() & '/embed-icon-#node.key#-#iconURL.listLast( '/' ).listFirst( '?' )#';
 					var actualLocalpath = localpath;
@@ -231,22 +232,19 @@ component accessors='true' {
 					}
 					// if it doesn't exist already
 					if( !fileExists( localPath ) ) {
-						
 						// Download it
 						acquireExternalAsset( iconURL, localpath );
-						
+
 						// Convert ICOs to PNGs.
 						convertICOtoPNG( localpath, localpath & '.png' )
 						localpath = localpath & '.png';
 						resizeImage( localpath );
-					
-					} 
-					
+					}
+
 					embedData.pageIcon = actualLocalpath;
 				} catch( any e ) {
 					job.addWarnLog( 'No favicon found for this link' );
 				}
-					
 			}
 
 			job.addLog( 'Found: #embedData.pageTitle#' );
@@ -268,11 +266,11 @@ component accessors='true' {
 	function convertICOtoPNG( required string sourceFile, required string targetFile ) {
 		var jSourceFile = createObject( 'java', 'java.io.File' ).init( sourceFile );
 		var jTargetFile = createObject( 'java', 'java.io.File' ).init( targetFile );
-		
+
 		// Read in ICO file to array of BufferedImage objects
 		var images = createObject( 'java', 'net.sf.image4j.codec.ico.ICODecoder' ).read( jSourceFile );
 		// Write out the first image in the array to a PNG file
-		createObject( 'java', 'javax.imageio.ImageIO' ).write( images.get(0), "png", jTargetFile );
+		createObject( 'java', 'javax.imageio.ImageIO' ).write( images.get( 0 ), 'png', jTargetFile );
 	}
 
 }

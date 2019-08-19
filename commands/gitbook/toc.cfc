@@ -13,47 +13,41 @@ component {
 	 * @version Version of the book to act on.
 	 * @version.optionsUDF versionsComplete
 	 */
-	function run(
-		string sourcePath,
-		string version = 'current'
-	) {
-		
+	function run( string sourcePath, string version = 'current' ) {
 		arguments.sourcePath = resolvePath( arguments.sourcePath ?: '' );
 		if( fileExists( sourcepath ) && sourcepath.right( 4 ) == '.zip' ) {
 			sourcePath = 'zip://' & sourcePath & '!';
 		}
-		
+
 		if( !bookService.isBook( sourcePath ) ) {
 			error( 'A revision.json file is not present in this path.  Please check your path.' );
 		}
 
 		var book = getInstance( 'BookExport@commandbox-gitbook' )
-				.setSourcePath( sourcePath )
-				.setExportVersion( version )
-				.load();
-			
+			.setSourcePath( sourcePath )
+			.setExportVersion( version )
+			.load();
+
 		print
 			.line()
 			.boldCyanLine( book.getTitle() & ( book.getVersions().len() ? ' (#book.getExportVersion()#)' : '' ) );
-			
-		book.getTOC().each( ( section ) => {
-			
-			print
-				.line()
-				.indentedBoldAquaLine( section.title );
-				
-			generateTOCNode( section.children, '    ' );
-			
-		} );
+
+		book
+			.getTOC()
+			.each( ( section ) => {
+				print.line().indentedBoldAquaLine( section.title );
+
+				generateTOCNode( section.children, '    ' );
+			} );
 	}
 
 	/**
-	* Recursivley print TOC as a tree
-	*/
-	private function generateTOCNode( array TOCNodes, string prefix='' ) {
+	 * Recursivley print TOC as a tree
+	 */
+	private function generateTOCNode( array TOCNodes, string prefix = '' ) {
 		var i = 0;
 		var childrenCount = TOCNodes.len();
-		
+
 		TOCNodes.each( ( child ) => {
 			i++;
 			var children = child.children;
@@ -61,13 +55,12 @@ component {
 			var isLast = ( i == childrenCount );
 			var branch = ( isLast ? '└' : '├' ) & '─' & ( childDepCount ? '┬' : '─' );
 			var branchCont = ( isLast ? ' ' : '│' ) & ' ' & ( childDepCount ? '│' : ' ' );
-			
+
 			print.line( prefix & branch & ' ' & child.title );
 			if( children.len() ) {
 				generateTOCNode( children, prefix & ( isLast ? '  ' : '│ ' ) );
 			}
 		} );
-		
 	}
 
 
@@ -77,15 +70,14 @@ component {
 			if( fileExists( sourcepath ) && sourcepath.right( 4 ) == '.zip' ) {
 				sourcePath = 'zip://' & sourcePath & '!';
 			}
-			
+
 			if( bookService.isBook( sourcePath ) ) {
 				return getInstance( 'BookExport@commandbox-gitbook' )
 					.setSourcePath( sourcePath )
 					.getVersions()
-					.map( (v) => v.title );
+					.map( ( v ) => v.title );
 			}
 			return [];
-			
 		} catch( any e ) {
 			return [];
 		}

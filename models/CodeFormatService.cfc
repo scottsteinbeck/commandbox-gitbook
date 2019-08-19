@@ -67,7 +67,7 @@ component accessors='true' singleton {
 			// If we found something, return it.
 			var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 			if( !isNull( lexResult ) && len( lexResult ) ) {
-				return {lexer: lexResult, source: 'gb syntax'};
+				return { lexer : lexResult, source : 'gb syntax' };
 			}
 		}
 
@@ -93,7 +93,7 @@ component accessors='true' singleton {
 			// If we found something, return it.
 			var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 			if( !isNull( lexResult ) && len( lexResult ) ) {
-				return {lexer: lexResult, source: 'filename'};
+				return { lexer : lexResult, source : 'filename' };
 			}
 		}
 
@@ -117,9 +117,9 @@ component accessors='true' singleton {
 		// If we found something, return it.
 		var lexResult = getInterpreter().get( 'lexResult', ''.getClass() );
 		if( !isNull( lexResult ) && len( lexResult ) ) {
-			return {lexer: lexResult, source: 'code guess'};
+			return { lexer : lexResult, source : 'code guess' };
 		} else {
-			return {lexer: 'TextLexer', source: 'default'};
+			return { lexer : 'TextLexer', source : 'default' };
 		}
 	}
 

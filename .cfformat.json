@@ -10,5 +10,6 @@
     "keywords.spacing_to_group": "false",
     "keywords.padding_inside_group": "true",
     "strings.attributes.quote": "single",
-    "struct.separator": " : "
+    "struct.separator": " : ",
+    "function_anonymous.padding": true
 }
