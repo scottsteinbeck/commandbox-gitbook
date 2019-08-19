@@ -1,10 +1,13 @@
-<cfoutput>
 <html>
+<cfoutput>
     <title></title>
-    <head>
+    <head>    
+    </head><body>
+
+        <style>
     	<cfloop array="#node.data.styles#" item="style">
-    		<style type="text/css">#style#</style>
-    	</cfloop>
-    </head>
-    <body>
+            #style#
+        </cfloop>
+        </style>
+
 </cfoutput>
