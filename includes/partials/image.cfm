@@ -13,6 +13,6 @@
 			</cfif>
 			<img  align="center" style="max-width:100%" src="file:///#localpath#" />
 		</cfif>
-		<div class="caption">#node.data.caption ?: ''#</div>
+		<div class="caption">#node.data?.caption ?: ''#</div>
 </div>
 </cfoutput>
