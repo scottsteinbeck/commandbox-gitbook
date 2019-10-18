@@ -272,7 +272,7 @@ component accessors='true' {
 		return renderPartial(
 			'page',
 			{ data : { page : page } },
-			( !isNull( pageJSON ) ? renderNode( pageJSON.document, book ) : '' ),
+			( !isNull( pageJSON ) && !isNull( pageJSON.document ) ? renderNode( pageJSON.document, book ) : '' ),
 			book
 		);
 	}

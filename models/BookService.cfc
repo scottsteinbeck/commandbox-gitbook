@@ -104,14 +104,19 @@ component accessors='true' {
 	 * @targetFilePath Local file path to process.  Will overwrite itself.
 	 */
 	function resizeImage( required string targetFilePath ) {
-		var assetImage = imageRead( targetFilePath );
-		if( assetImage.getWidth() > 700 ) imageScaleTofit(
-				assetImage,
-				700,
-				'',
-				'mediumPerformance'
-			);
-		imageWrite( assetImage, targetFilePath, .8, true );
+		// CMKY images not supported, so just ignore
+		try {
+			var assetImage = imageRead( targetFilePath );
+			if( assetImage.getWidth() > 700 ) imageScaleTofit(
+					assetImage,
+					700,
+					'',
+					'mediumPerformance'
+				);
+			imageWrite( assetImage, targetFilePath, .8, true );
+		} catch( any e ) {
+			job.addWarnLog( 'Could not resize file.  #e.message# #e.detail#' );
+		}
 	}
 
 	/**
