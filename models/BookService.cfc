@@ -62,13 +62,20 @@ component accessors='true' {
 
 		// Loop over each asset and transfer it from the assets folder, or download as neccessary
 		assetCollection.each( ( assetID, assetData ) => {
-			job.addLog( assetData.name );
-			var sourcePath = book.getSourcePath() & '/assets/' & assetData.name;
+			
+			var sourcePath = book.getSourcePath() & '/assets/' & assetData.uid;
+			//Compat for older gitbook exports, the new standard is to use the uid for the file name
+			if(!fileExists(sourcePath)){
+				sourcePath = book.getSourcePath() & '/assets/' & assetData.name;
+			}
+
 			var targetFilePath = book.getAssetDirectory() & '/' & getAssetUniqueName( assetData );
 			if( !fileExists( targetFilePath ) ) {
 				if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
+					job.addLog( assetData.name & " (found) ");
 					fileCopy( sourcePath, targetFilePath );
 				} else {
+					job.addLog( assetData.name & " (downloaded)");
 					acquireExternalAsset( assetData.downloadURL, targetFilePath );
 				}
 
