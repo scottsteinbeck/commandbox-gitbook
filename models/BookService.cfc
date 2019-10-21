@@ -34,7 +34,7 @@ component accessors='true' {
 	 * }
 	 */
 	string function getAssetUniqueName( required struct assetData ) {
-		return 'asset' & assetData.uid & '-' & assetData.name
+		return assetData.uid & '-' & assetData.name
 	}
 
 	/**
@@ -51,27 +51,14 @@ component accessors='true' {
 
 		directoryCreate( book.getAssetDirectory(), true, true )
 
-		// Find assets in the JSON that have the same name.  We'll need to re-download these!
-		var dupeAssets = assetCollection
-			.reduce( ( dupeAssets, k, v ) => {
-				dupeAssets[ v.name ] = dupeAssets[ v.name ] ?: 0;
-				dupeAssets[ v.name ]++;
-				return dupeAssets;
-			}, {} )
-			.filter( ( k, v ) => v > 1 );
-
 		// Loop over each asset and transfer it from the assets folder, or download as neccessary
 		assetCollection.each( ( assetID, assetData ) => {
 			
-			var sourcePath = book.getSourcePath() & '/assets/' & assetData.uid;
-			//Compat for older gitbook exports, the new standard is to use the uid for the file name
-			if(!fileExists(sourcePath)){
-				sourcePath = book.getSourcePath() & '/assets/' & assetData.name;
-			}
-
+			var sourcePath = book.getSourcePath() & '/assets/' & getAssetUniqueName( assetData );
 			var targetFilePath = book.getAssetDirectory() & '/' & getAssetUniqueName( assetData );
+			
 			if( !fileExists( targetFilePath ) ) {
-				if( fileExists( sourcePath ) && !dupeAssets.keyExists( assetData.name ) ) {
+				if( fileExists( sourcePath ) ) {
 					job.addLog( assetData.name & " (found) ");
 					fileCopy( sourcePath, targetFilePath );
 				} else {
