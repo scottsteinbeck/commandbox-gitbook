@@ -67,7 +67,7 @@ component accessors='true' {
 				}
 
 				// reduce oversized images
-				if( isImageFile( targetFilePath ) ) {
+				if( fileExists( targetFilePath ) && isImageFile( targetFilePath ) ) {
 					resizeImage( targetFilePath );
 				}
 			}
@@ -83,13 +83,17 @@ component accessors='true' {
 	 * @targetFilePath Local file path to save it as
 	 */
 	function acquireExternalAsset( required string downloadURL, required string targetFilePath ) {
-		progressableDownloader.download(
-			downloadURL,
-			targetFilePath,
-			function( status ) {
-				progressBar.update( argumentCollection = status );
-			}
-		);
+		try {
+			progressableDownloader.download(
+				downloadURL,
+				targetFilePath,
+				function( status ) {
+					progressBar.update( argumentCollection = status );
+				}
+			);
+		} catch( any var e ) {
+			job.addErrorLog( e.message );
+		}
 	}
 
 	/**
@@ -207,7 +211,7 @@ component accessors='true' {
 					// Download it
 					acquireExternalAsset( iconURL, localpath );
 					// Convert ICOs to PNGs.
-					if( localpath.listLast( '.' ) == 'ico' ) {
+					if( fileExists( localpath ) && localpath.listLast( '.' ) == 'ico' ) {
 						convertICOtoPNG( localpath, localpath & '.png' )
 						localpath = localpath & '.png';
 						resizeImage( localpath );
@@ -233,11 +237,13 @@ component accessors='true' {
 					if( !fileExists( localPath ) ) {
 						// Download it
 						acquireExternalAsset( iconURL, localpath );
-
-						// Convert ICOs to PNGs.
-						convertICOtoPNG( localpath, localpath & '.png' )
-						localpath = localpath & '.png';
-						resizeImage( localpath );
+						
+						if( fileExists( localpath ) ) {
+							// Convert ICOs to PNGs.
+							convertICOtoPNG( localpath, localpath & '.png' )
+							localpath = localpath & '.png';
+							resizeImage( localpath );	
+						}
 					}
 
 					embedData.pageIcon = actualLocalpath;
