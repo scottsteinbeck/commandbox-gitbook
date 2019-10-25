@@ -323,9 +323,10 @@ component accessors='true' {
 
 				if( raw ) {
 					// Code lines are preformatted so don't escape them
-					thisText = thisText
+					thisText = thisText;
 				} else {
 					thisText = encodeForHTML( thisText );
+					thisText = rereplace(thisText,'&##xa;|&##0A;|&##10;','<br>','all');
 				}
 				r.marks.each( ( m ) => {
 					thisText = trim( renderPartial( 'mark-#m.type#', m, thisText, book ) );
