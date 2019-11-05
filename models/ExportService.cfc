@@ -290,7 +290,7 @@ component accessors='true' {
 				return renderNode(
 					node,
 					book,
-					// Don't escape HTML if this is a code line, or are ancenstor was one
+					// Don't escape HTML if this is a code line, or our ancenstor was one
 					raw || ( node.type ?: '' ) == 'code-line'
 				)
 			} )
@@ -363,5 +363,12 @@ component accessors='true' {
 		}
 		return local.HTML
 	}
+
+	function pathToURL( required string path ) {
+		return createOBject( 'java', 'java.io.File' ).init( path )
+			.toURI()
+			.toURL()
+			.toString();
+	} 
 
 }

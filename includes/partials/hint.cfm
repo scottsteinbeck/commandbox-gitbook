@@ -4,7 +4,7 @@
 			<tr>
 				<td valign="top" style="padding: 4px 0px;">	
 					<cfif node.data.keyExists('style')>
-						<img src="file:///#expandPath( "/commandbox-gitbook/includes/icons/#node.data.style#.png" )#" width="30"/>		
+						<img src="#pathToURL( expandPath( "/commandbox-gitbook/includes/icons/#node.data.style#.png" ) )#" width="30"/>		
 					</cfif>		
 				</td>
 				<td>#innerContent#</td>

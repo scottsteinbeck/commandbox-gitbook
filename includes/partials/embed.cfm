@@ -17,7 +17,7 @@
 					</td>
 					<cfif len( embedData.pageIcon ) >
 					<td width="40">
-							<img width="40" src="file:///#embedData.pageIcon#" />
+							<img width="40" src="#pathToURL( embedData.pageIcon )#" />
 						</td>
 					</cfif>
 				</tr>
