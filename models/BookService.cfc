@@ -113,6 +113,14 @@ component accessors='true' {
 					'mediumPerformance'
 				);
 			}
+			if( assetImage.getHeight() > 900 ) {
+				imageScaleTofit(
+					assetImage,
+					'',
+					900,
+					'mediumPerformance'
+				);
+			}
 			imageWrite( assetImage, targetFilePath, .8, true );
 		} catch( any e ) {
 			job.addWarnLog( 'Could not resize file.  #e.message# #e.detail#' );
