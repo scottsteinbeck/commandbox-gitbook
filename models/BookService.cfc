@@ -185,6 +185,11 @@ component accessors='true' {
  				resolveurl=true
  				attributeCollection=proxyParams;
 
+			// Just stop here if this is a PDF or something
+			if( !local.httpResult.mimetype contains 'html' ) {
+				return embedData;
+			}
+
 			// Assume the server is up, HTML comes back, it is parsable.
 			var PageXML = htmlParse( local.httpResult.fileContent, false );
 
