@@ -1,4 +1,4 @@
 <cfoutput>
-	<h3>Response</h3>
+	<div class="h3">Response</div>
 	<div class="api-method-response">#innerContent#</div>
 </cfoutput>

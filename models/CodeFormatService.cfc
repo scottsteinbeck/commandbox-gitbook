@@ -35,7 +35,7 @@ component accessors='true' singleton {
 			 & 'Result = highlight(code, #lexerResult.lexer#(), HtmlFormatter( linenos=linenos, filename=fileName ))'
 		);
 
-		return '<!-- #lexerResult.lexer#: #lexerResult.source# -->' & getInterpreter().get( 'Result', ''.getClass() )
+		return getInterpreter().get( 'Result', ''.getClass() )
 	}
 
 

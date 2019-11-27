@@ -1,4 +1,4 @@
-<cfoutput><div style="text-align:center;padding:30px;page-break-after:always">
+<cfoutput><div style="text-align:center;padding:30px">
     <img src="#book.getLogo()#">
     <br />
     <h1 style="font-size: 40px;">#encodeForHTML( book.getTitle() )#</h1>

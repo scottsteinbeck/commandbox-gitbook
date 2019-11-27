@@ -1,3 +1,3 @@
 <cfoutput>
-	<h2>#innerContent#</h2>
+	<div class="h2">#innerContent#</div>
 </cfoutput>

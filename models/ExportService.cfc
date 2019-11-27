@@ -8,6 +8,8 @@ component accessors='true' {
 	property name='job' inject='interactiveJob';
 	property name='progressBarGeneric' inject='progressBarGeneric';
 	property name='FilesystemUtil' inject='Filesystem';
+	property name='moduleSettings'	inject='commandbox:moduleSettings:gitbook-exporter';
+
 
 	processingdirective pageEncoding='UTF-8';
 
@@ -130,6 +132,12 @@ component accessors='true' {
 
 		book.setPages( pages );
 
+		var defaultStyles = "styles.css";
+
+		if( moduleSettings['isOldPdfEngine'] ) {
+			defaultStyles = "styles_pd4ml.css";
+		}
+
 		book.setBodyWrapperTop(
 			renderPartial(
 				'body-wrapper-top',
@@ -142,7 +150,8 @@ component accessors='true' {
 								)
 							),
 							// TODO: add user styles by convention such that they override built in styles
-							fileRead( expandPath( '/commandbox-gitbook/includes/styles.css' ) )
+							fileRead( expandPath( '/commandbox-gitbook/includes/' & defaultStyles ) )
+
 						]
 					}
 				},
@@ -195,42 +204,42 @@ component accessors='true' {
      			localurl=true
      			attributeCollection=book.getPDFOpts() {
 			documentSection {
-				documentitem type='header' evalAtPrint=true {
-					echo( '' );
-				}
-				documentitem type='footer' evalAtPrint=true {
-					echo( '' );
-				}
+				// documentitem type='header' evalAtPrint=true {
+				// 	echo( '' );
+				// }
+				// documentitem type='footer' evalAtPrint=true {
+				// 	echo( '' );
+				// }
 
 				echo( book.getBodyWrapperTop() );
 				echo( book.getPages()[ 1 ] );
 				echo( book.getBodyWrapperBottom() );
 			}
 
-			documentSection {
+			documentSection	{
 				echo( book.getBodyWrapperTop() );
 
-				documentitem type='header' evalAtPrint=true {
-					echo(
-						renderPartial(
-							'header',
-							{ 'data' : { cfdocument : cfdocument } },
-							'',
-							book
-						)
-					);
-				}
-				// Putting this inside of a section breaks the page numbering due to Lucee bug
-				documentitem type='footer' evalAtPrint=true {
-					echo(
-						renderPartial(
-							'footer',
-							{ 'data' : { cfdocument : cfdocument } },
-							'',
-							book
-						)
-					);
-				}
+				// documentitem type='header' evalAtPrint=true {
+				// 	echo(
+				// 		renderPartial(
+				// 			'header',
+				// 			{ 'data' : { cfdocument : cfdocument } },
+				// 			'',
+				// 			book
+				// 		)
+				// 	);
+				// }
+				// // Putting this inside of a section breaks the page numbering due to Lucee bug
+				// documentitem type='footer' evalAtPrint=true {
+				// 	echo(
+				// 		renderPartial(
+				// 			'footer',
+				// 			{ 'data' : { cfdocument : cfdocument } },
+				// 			'',
+				// 			book
+				// 		)
+				// 	);
+				// }
 
 				var counter = 0;
 				for( var page in book.getPages() ) {
@@ -369,6 +378,6 @@ component accessors='true' {
 			.toURI()
 			.toURL()
 			.toString();
-	} 
+	}
 
 }
