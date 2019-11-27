@@ -82,7 +82,10 @@ div.toc ul li.d_0 div.d_0 {
 	padding: 13px 0 0;
 }
 
-div.toc ul li.d_1 {
+div.toc ul li.d_1,
+div.toc ul li.d_2,
+div.toc ul li.d_3,
+div.toc ul li.d_4 {
 	padding: 4px 0 0;
 	list-style: none;
 }
