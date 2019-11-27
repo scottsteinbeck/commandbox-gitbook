@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto|Source+Code+Pro&display=swap");
 
 /* Header and footer */
+
 @page {
 	size: auto;
 
@@ -11,7 +12,30 @@
 		font-size: 14px;
 	}
 
+	@bottom-left {
+		content: element(pageTitle);
+		font-family: Arial, sans-serif;
+		color: #999;
+		font-size: 14px;
+	}
+
 }
+
+@page :first {
+	@bottom-right {
+		content: "";
+	}
+
+	@bottom-left {
+		content: "";
+	}
+}
+
+
+#pageTitle {
+	position: running(pageTitle);
+}
+
 
 
 
@@ -30,7 +54,7 @@ ul.toc a {
 
 
 ul.toc a::after {
-	content: target-counter(attr(href), page);
+	content: leader(".") target-counter(attr(href), page);
 }
 
 div.toc ul {

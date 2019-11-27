@@ -6,6 +6,7 @@
 		<meta charset="UTF-8">
     </head>
 	<body>
+		<div id="pageTitle"><cfif book.getRenderOpts().showTitleInPage >#encodeForHTML( book.getTitle() )#</cfif></div>
 		<cfif moduleSettings['isOldPdfEngine']>
 			<pd4ml:page.footer scope="2+"  style="display: none; visibility: hidden; pd4ml-display: block; pd4ml-visibility: visible">
 			<div class="footer" style="font-family: Arial, sans-serif;color: ##999;font-size: 12px;">
