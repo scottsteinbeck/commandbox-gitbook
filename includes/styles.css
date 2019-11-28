@@ -348,6 +348,9 @@ span.lineno {
 	margin-bottom: 15px;
 	margin-top: -4px;
 	background: #f8f8f8;
+	page-break-before: avoid;
+	page-break-inside: avoid;
+	page-break-after: avoid;
 }
 
 .code-line {
@@ -371,6 +374,7 @@ span.lineno {
 	margin: 4px 0;
 	page-break-before: avoid;
 	page-break-inside: avoid;
+	page-break-after: avoid;
 }
 
 .hint {
@@ -384,6 +388,9 @@ span.lineno {
 	background-size: 27px;
 	background-position: 10px center;
 	vertical-align: middle;
+	page-break-before: avoid;
+	page-break-inside: avoid;
+	page-break-after: avoid;
 
 }
 
