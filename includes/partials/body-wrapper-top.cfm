@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <cfoutput>
+<cfset bookTitle = "">
+<cfif book.getRenderOpts().showTitleInPage ><cfset bookTitle = ( book.getTitle() )></cfif>
 <html>
 	<head>
-		<title><cfif book.getRenderOpts().showTitleInPage >#encodeForHTML( book.getTitle() )#</cfif></title>
+		<title>#encodeForHTML( bookTitle )#</title>
 		<meta charset="UTF-8">
     </head>
 	<body>
-		<div id="pageTitle"><cfif book.getRenderOpts().showTitleInPage >#encodeForHTML( book.getTitle() )#</cfif></div>
 		<cfif moduleSettings['isOldPdfEngine']>
 			<pd4ml:page.footer scope="2+"  style="display: none; visibility: hidden; pd4ml-display: block; pd4ml-visibility: visible">
 			<div class="footer" style="font-family: Arial, sans-serif;color: ##999;font-size: 12px;">
@@ -14,9 +15,7 @@
 				<table width="100%">
 					<tr>
 						<td style="border:none">
-							<cfif book.getRenderOpts().showTitleInPage >
-								#encodeForHTML( book.getTitle() )#
-							</cfif>
+							#bookTitle#
 						</td>
 						<td align="right" style="border:none">
 							$[page] of $[total]
@@ -25,6 +24,22 @@
 				</table>
 			</div>
 		</pd4ml:page.footer>
+	<cfelse>
+		<style>
+			@page {
+				@top-right {
+					font-family: Arial, sans-serif;
+					color: ##999;
+					font-size: 12px;
+					content: "#bookTitle#";
+				}
+			}
+			@page :first{
+				@top-right {
+					content: ""
+				}
+			}
+		</style>
 	</cfif>
 	<cfloop array="#node.data.styles#" item="style">
 		<style type="text/css">#style#</style>

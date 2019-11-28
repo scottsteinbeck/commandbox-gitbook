@@ -13,7 +13,7 @@
 	}
 
 	@bottom-left {
-		content: element(pageTitle);
+		content: element(sectionHeader);
 		font-family: Arial, sans-serif;
 		color: #999;
 		font-size: 12px;
@@ -22,6 +22,7 @@
 }
 
 @page :first {
+
 	@bottom-right {
 		content: "";
 	}
@@ -137,6 +138,14 @@ h5,
 	page-break-after: avoid;
 }
 
+.section-header {
+	position: running(sectionHeader);
+	font-family: Arial,
+		sans-serif;
+	color: #999;
+	font-size: 12px;
+}
+
 h1,
 .h1 {
 	font-size: 16px;
@@ -189,6 +198,7 @@ h1.page,
 	border-bottom: 2px solid #e6ecf1;
 	padding: 0 0 20px;
 	margin: 0;
+	string-set: heading content();
 }
 
 blockquote {
@@ -352,7 +362,6 @@ span.lineno {
 	margin-bottom: 15px;
 	margin-top: -4px;
 	background: #f8f8f8;
-	page-break-before: avoid;
 	page-break-inside: avoid;
 	page-break-after: avoid;
 }
@@ -376,9 +385,6 @@ span.lineno {
 
 .code-tab {
 	margin: 4px 0;
-	page-break-before: avoid;
-	page-break-inside: avoid;
-	page-break-after: avoid;
 }
 
 .hint {
@@ -392,7 +398,6 @@ span.lineno {
 	background-size: 27px;
 	background-position: 10px center;
 	vertical-align: middle;
-	page-break-before: avoid;
 	page-break-inside: avoid;
 	page-break-after: avoid;
 
