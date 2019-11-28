@@ -47,6 +47,10 @@ ul.toc {
 	page-break-after: always;
 }
 
+a.d_0 {
+	font-weight: bold;
+}
+
 ul.toc a {
 	font-family: Arial, sans-serif;
 	color: #333;
