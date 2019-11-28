@@ -204,10 +204,10 @@ component {
 			.line();
 
 		if( book.getCreatePDF() ) {
-			print.yellowLine( 'HTML written to #book.getHTMLExportFilePath()#' );
+			print.yellowLine( 'PDF written to #book.getPDFExportFilePath()#' );
 		}
 		if( book.getCreateHTML() ) {
-			print.yellowLine( 'PDF written to #book.getPDFExportFilePath()#' );
+			print.yellowLine( 'HTML written to #book.getHTMLExportFilePath()#' );
 		}
 	}
 
