@@ -276,7 +276,7 @@ component accessors='true' {
 	 * @book Instance of BookExport object
 	 */
 	function renderPage( required struct page, required book ) {
-		var pageJSON = book.getPageJSON( page.path );
+		var pageJSON = book.getPageJSON( page.path, page.uID );
 
 		return renderPartial(
 			'page',

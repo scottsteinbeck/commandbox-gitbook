@@ -156,6 +156,11 @@ component accessors='true' {
 			pageIcon : ''
 		};
 
+		// If this is a direct link to a PDF file, don't bother looking for HTML.  Add any additiona extensions here to check for
+		if( lcase( embedURL ).endsWith( '.pdf' ) ) {
+			return embedData;
+		}
+
 		try {
 			// Account for any proxy config settings the user may have in CommandBox
 			var proxyServer = ConfigService.getSetting( 'proxy.server', '' )

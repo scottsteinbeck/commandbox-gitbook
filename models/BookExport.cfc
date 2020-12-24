@@ -96,12 +96,18 @@ component accessors='true' {
 	/**
 	 * Read JSON for a given page
 	 */
-	function getPageJSON( pageName ) {
-		return retrieveJSON( 'versions/#getExportVersion()#/#pageName#.json' );
+	function getPageJSON( pageName, uID ) {
+		if( fileExists( sourcePath & '/versions/#getExportVersion()#/#pageName#.json' ) ) {
+			return retrieveJSON( 'versions/#getExportVersion()#/#pageName#.json' );			
+		} else if( !isNull( uID ) ) {
+			return retrieveJSON( 'versions/#getExportVersion()#/#uID#.json' );
+		} else {
+			throw( 'JSON file [versions/#getExportVersion()#/#pageName#.json] not found.' );
+		}
 	}
 
 	/**
-	 * Fetched a cached JSON file by relative path to the sourcePath.
+	 * Fetched a cached JSON file by relative path to the sourcePath
 	 *
 	 * @absolute Set to true, if passing an external path that's not inside the book sourcePath
 	 */
@@ -145,7 +151,10 @@ component accessors='true' {
 
 		// Resursive function for filtering page data
 		var filterPageTitles = function( required array pages ) {
-			return pages.map( ( v ) => {
+			return pages
+				// TODO: Implement external links
+				.filter( ( v )=> v.kind != 'link' )
+				.map( ( v ) => {
 				return [
 					'uid' : v.keyExists( 'uID' ) ? v.uID : '',
 					'title' : v.title,
