@@ -299,7 +299,7 @@ component accessors='true' {
 				return renderNode(
 					node,
 					book,
-					// Don't escape HTML if this is a code line, or our ancenstor was one
+					// Don't escape HTML if this is a code line, or our ancestor was one
 					raw || ( node.type ?: '' ) == 'code-line'
 				)
 			} )
