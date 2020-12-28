@@ -68,7 +68,12 @@ component accessors='true' {
 
 		// Default file name partial if we don't have one.
 		if( getTargetPathPartial().endsWith( '\' ) || getTargetPathPartial().endsWith( '/' ) ) {
-			setTargetPathPartial( getTargetPathPartial() & slugify( getTitle() ) );
+			var slugifiedTitle = slugify( getTitle() );
+			if( len( slugifiedTitle ) ) {
+				setTargetPathPartial( getTargetPathPartial() & slugifiedTitle );	
+			} else {
+				setTargetPathPartial( getTargetPathPartial() & 'book' );
+			}
 		}
 
 		directoryCreate( getDirectoryFromPath( getPDFExportFilePath() ), true, true );
